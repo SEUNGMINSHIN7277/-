@@ -15,12 +15,39 @@ from .providers.render import FFmpegRenderProvider
 logger = logging.getLogger("shorts_agent")
 
 
+def _build_voice(s: Settings):
+    """TTS_PROVIDER 우선, 없으면 사용 가능한 키로 자동 선택."""
+    p = (s.tts_provider or "").lower()
+    if p == "clova" or (p != "elevenlabs" and s.clova_client_id and s.clova_client_secret):
+        if s.clova_client_id and s.clova_client_secret:
+            from .providers.tts_kr import CLOVAVoiceProvider
+            logger.info("TTS: Naver CLOVA Voice")
+            return CLOVAVoiceProvider(s.clova_client_id, s.clova_client_secret, s.clova_speaker)
+    if p == "typecast" or (p != "elevenlabs" and s.typecast_api_key and s.typecast_actor_id):
+        if s.typecast_api_key and s.typecast_actor_id:
+            from .providers.tts_kr import TypecastVoiceProvider
+            logger.info("TTS: Typecast")
+            return TypecastVoiceProvider(s.typecast_api_key, s.typecast_actor_id)
+    if s.elevenlabs_api_key and s.elevenlabs_voice_id:
+        from .providers.tts import ElevenLabsVoiceProvider
+        logger.info("TTS: ElevenLabs")
+        return ElevenLabsVoiceProvider(s.elevenlabs_api_key, s.elevenlabs_voice_id, s.elevenlabs_model)
+    return None
+
+
 def build_providers(s: Settings) -> Providers:
     from .providers import mock
 
     render = FFmpegRenderProvider(s)       # 렌더/자막은 항상 실제 FFmpeg
     caption = ASSCaptionProvider(s)
-    feedback = LocalFeedbackProvider(s)
+
+    # 피드백: Analytics 토큰 있으면 실연동, 없으면 로컬 performance.json
+    if not s.dry_run and s.youtube_analytics_token_file:
+        from .providers.feedback import YouTubeAnalyticsFeedback
+        feedback = YouTubeAnalyticsFeedback(s, s.youtube_analytics_token_file)
+        logger.info("피드백: YouTube Analytics 실연동")
+    else:
+        feedback = LocalFeedbackProvider(s)
 
     if s.dry_run:
         logger.info("DRY-RUN 모드: mock 프로바이더 사용(외부 API 호출 없음)")
@@ -44,6 +71,12 @@ def build_providers(s: Settings) -> Providers:
         logger.warning("쿠팡 키 없음 → MockResearch 폴백")
         research = mock.MockResearch()
 
+    # 특색 상품 LLM 큐레이션(Anthropic 키 있으면 래핑)
+    if s.anthropic_api_key:
+        from .providers.curation import LLMCuratedResearch
+        research = LLMCuratedResearch(research, s.anthropic_api_key, s.llm_model, s.target_audience)
+        logger.info("연구: LLM 특색 큐레이션 활성화")
+
     if s.anthropic_api_key:
         from .providers.llm import LLMScriptProvider
         script = LLMScriptProvider(s.anthropic_api_key, s.llm_model)
@@ -52,13 +85,16 @@ def build_providers(s: Settings) -> Providers:
         script = mock.MockScript()
 
     # 에셋: 로컬 실소재(직접촬영/제조사) 우선 + Pexels 보조. 둘 다 없으면 mock.
-    from .providers.local_assets import LocalAssetProvider
+    from .providers.local_assets import LocalAssetProvider, _MEDIA
     pexels = None
     if s.pexels_api_key:
         from .providers.pexels import PexelsAssetProvider
         pexels = PexelsAssetProvider(s.pexels_api_key)
-    has_local = (s.products_dir.exists() and any(s.products_dir.iterdir())) or \
-                (s.broll_dir.exists() and any(s.broll_dir.iterdir()))
+
+    def _has_media(d) -> bool:
+        return d.exists() and any(p.suffix.lower() in _MEDIA for p in d.rglob("*"))
+
+    has_local = _has_media(s.products_dir) or _has_media(s.broll_dir)
     if has_local or pexels:
         asset = LocalAssetProvider(s, fallback=pexels)
         logger.info("에셋: LocalAssetProvider (로컬 실소재 우선%s)",
@@ -67,13 +103,9 @@ def build_providers(s: Settings) -> Providers:
         logger.warning("로컬 소재/Pexels 키 없음 → MockAsset(그라데이션) 폴백")
         asset = mock.MockAsset(s)
 
-    if s.elevenlabs_api_key and s.elevenlabs_voice_id:
-        from .providers.tts import ElevenLabsVoiceProvider
-        voice = ElevenLabsVoiceProvider(
-            s.elevenlabs_api_key, s.elevenlabs_voice_id, s.elevenlabs_model)
-    else:
-        logger.warning("ElevenLabs 키 없음 → MockVoice(무음+타이밍) 폴백")
-        voice = mock.MockVoice()
+    voice = _build_voice(s) or mock.MockVoice()
+    if isinstance(voice, mock.MockVoice):
+        logger.warning("TTS 키 없음 → MockVoice(무음+타이밍) 폴백")
 
     if s.youtube_token_file:
         from .providers.youtube import YouTubeUploadProvider

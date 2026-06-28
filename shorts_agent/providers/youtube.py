@@ -83,5 +83,13 @@ class YouTubeUploadProvider(UploadProvider):
             retryable = "quotaExceeded" not in msg and "forbidden" not in msg.lower()
             raise StageError(Stage.UPLOADED, f"업로드 실패: {e}", retryable) from e
         vid = resp["id"]
+        # 커스텀 썸네일 설정(best-effort; 권한/할당량 문제 시 무시)
+        if job.thumbnail_path:
+            try:
+                from googleapiclient.http import MediaFileUpload as _MFU
+                service.thumbnails().set(
+                    videoId=vid, media_body=_MFU(job.thumbnail_path)).execute()
+            except Exception as e:
+                logger.warning("썸네일 설정 실패(무시): %s", e)
         job.note(f"YouTube 업로드: https://youtu.be/{vid}")
         return vid

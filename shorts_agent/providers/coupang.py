@@ -30,6 +30,9 @@ _HIGH_CONV_HINTS = [
     "헤어", "마사지", "꿀템", "생활", "간식", "원룸", "자취", "반려", "디퓨저",
 ]
 _HOOK_WORDS = ["꿀템", "신상", "역대", "대박", "필수", "마성", "갓성비", "리얼", "가성비"]
+# 특색(신박함/wow) 신호 — 스크롤을 멈추게 하는 제품 특성
+_NOVELTY = ["미니", "휴대", "무선", "자동", "전동", "접이식", "led", "진동", "무드",
+            "다용도", "1초", "초간단", "핸즈프리", "충전식", "방수"]
 
 
 class CoupangClient:
@@ -91,9 +94,10 @@ class CoupangClient:
 
 
 def _hook_score(name: str, category: str) -> float:
-    text = f"{name} {category}"
-    s = 0.4
-    s += 0.1 * sum(w in text for w in _HOOK_WORDS)
+    text = f"{name} {category}".lower()
+    s = 0.35
+    s += 0.08 * sum(w in text for w in _HOOK_WORDS)
+    s += 0.09 * sum(w in text for w in _NOVELTY)   # 특색/신박 가산
     return min(s, 1.0)
 
 

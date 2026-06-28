@@ -5,6 +5,7 @@ import logging
 import uuid
 from dataclasses import dataclass
 from datetime import date
+from pathlib import Path
 
 from .config import Settings
 from .errors import StageError, with_retry
@@ -45,12 +46,17 @@ class ShortsAgent:
         self.s = settings
         self.p = providers
         self.store = store
+        self._weights: dict = {"format_weights": {}, "category_weights": {}}
 
     # ---------------- 배치 ----------------
     def run_batch(self, seeds: list[str], count: int) -> list[VideoJob]:
         count = min(count, self.s.daily_cap)
-        weights = self.p.feedback.collect([])  # 승자 패턴(가중치) — 향후 선정에 반영
-        logger.info("피드백 가중치: %s", weights or "(없음)")
+        recent_ids = [j.youtube_id for j in self.store.all_jobs() if j.youtube_id]
+        self._weights = self.p.feedback.collect(recent_ids) or self._weights
+        cat_w = self._weights.get("category_weights", {})
+        fmt_w = self._weights.get("format_weights", {})
+        if cat_w or fmt_w:
+            logger.info("승자 패턴 가중치 적용 — 카테고리:%s 포맷:%s", cat_w, fmt_w)
 
         candidates = with_retry(
             lambda: self.p.research.find_products(seeds, n=count * 2),
@@ -59,6 +65,10 @@ class ShortsAgent:
         if not candidates:
             logger.warning("상품 후보가 없습니다.")
             return []
+
+        # 성과 좋은 카테고리 가산 → 재정렬
+        candidates.sort(
+            key=lambda c: c.total_score * cat_w.get(c.category, 1.0), reverse=True)
 
         jobs: list[VideoJob] = []
         for cand in candidates[:count]:
@@ -86,9 +96,15 @@ class ShortsAgent:
         """포맷 로테이션 + 유사도 검사로 직전 영상과 겹치지 않는 대본 확보."""
         recent = self.store.recent_hooks
         start = self.store.next_format_index()
+        # 성과 가중치로 포맷 우선순위 정렬(동률은 로테이션 커서로 변주 → 양산 방지)
+        fmt_w = self._weights.get("format_weights", {})
+        order = sorted(
+            range(len(FORMAT_TYPES)),
+            key=lambda i: (-fmt_w.get(FORMAT_TYPES[i], 1.0), (i - start) % len(FORMAT_TYPES)),
+        )
         last_err: Exception | None = None
-        for k in range(len(FORMAT_TYPES)):
-            fmt = FORMAT_TYPES[(start + k) % len(FORMAT_TYPES)]
+        for k in order:
+            fmt = FORMAT_TYPES[k]
             try:
                 script = with_retry(
                     lambda f=fmt: self.p.script.write(
@@ -133,6 +149,7 @@ class ShortsAgent:
                 lambda: self.p.caption.stylize(job, wd / "render"), stage=Stage.CAPTIONED)
             job.stage = Stage.CAPTIONED
 
+            self._make_thumbnail(job, wd)
             self._compliance_check(job)
             job.stage = Stage.GATE_B
             job.note("컴플라이언스 통과 → GATE_B 대기")
@@ -144,6 +161,22 @@ class ShortsAgent:
         if job.stage == Stage.GATE_B and self.s.auto:
             self.publish(job)
         return job
+
+    def _make_thumbnail(self, job: VideoJob, wd) -> None:
+        """후킹 썸네일 생성(실패해도 파이프라인 진행)."""
+        try:
+            from .utils import make_thumbnail
+            bg = None
+            if job.assets and job.assets.product_clips:
+                imgs = [c for c in job.assets.product_clips if not c.lower().endswith(
+                    (".mp4", ".mov", ".webm", ".mkv", ".m4v"))]
+                bg = imgs[0] if imgs else None
+            out = Path(self.s.output_dir) / f"{job.job_id}.thumb.jpg"
+            job.thumbnail_path = str(
+                make_thumbnail(out, bg, job.script.chosen_hook, self.s.font_path))
+            job.note(f"썸네일 생성: {out.name}")
+        except Exception as e:
+            logger.warning("썸네일 생성 실패(무시): %s", e)
 
     # ---------------- 발행 전 자동 검증 ----------------
     def _compliance_check(self, job: VideoJob) -> None:

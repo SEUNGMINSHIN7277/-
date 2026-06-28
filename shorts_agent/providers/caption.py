@@ -60,6 +60,25 @@ def _esc(text: str) -> str:
     return text.replace("\n", " ").replace("{", "(").replace("}", ")").strip()
 
 
+# 강조(파워) 단어 — 스케일 업으로 시선 집중(카라오케 색은 유지)
+_POWER = {"진짜", "완전", "대박", "무료", "역대", "필수", "갓성비", "가성비", "반값",
+          "절반", "후회", "솔직", "신상", "끝", "최고", "단점", "초특가", "강추", "꿀템"}
+_NUM = re.compile(r"[0-9]|%|원|배|분|초|개")
+
+
+def _is_power(raw: str) -> bool:
+    w = raw.strip(",.!?…")
+    return w in _POWER or bool(_NUM.search(raw))
+
+
+def _word_span(raw: str) -> str:
+    """단어를 ASS 텍스트로(파워 단어는 살짝 확대)."""
+    t = _esc(raw)
+    if _is_power(raw):
+        return f"{{\\fscx120\\fscy120}}{t}{{\\fscx100\\fscy100}}"
+    return t
+
+
 def _group_words(words: list[dict], max_chars: int = 11, max_words: int = 4) -> list[list[dict]]:
     """단어들을 짧은 구절(2~4단어)로 묶음. 문장부호에서 끊음."""
     phrases: list[list[dict]] = []
@@ -90,7 +109,7 @@ def _karaoke_line(words: list[dict], style: str, *, pop: str, layer: int = 0,
         else:
             dur = float(w.get("end", ws)) - ws
         cs = max(6, round(dur * 100))
-        parts.append(f"{{\\kf{cs}}}{_esc(str(w.get('word', '')))} ")
+        parts.append(f"{{\\kf{cs}}}{_word_span(str(w.get('word', '')))} ")
     text = "".join(parts).strip()
     override = f"{{\\an5\\pos({_CX},{y})\\fad(70,40){pop}\\blur1}}"
     return (f"Dialogue: {layer},{_ts(start)},{_ts(end)},{style},,0,0,0,,{override}{text}")

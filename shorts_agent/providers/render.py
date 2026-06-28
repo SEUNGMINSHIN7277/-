@@ -63,12 +63,13 @@ class FFmpegRenderProvider(RenderProvider):
         broll_vids = [s for s in assets.b_roll_clips if is_video(s)]
         broll_imgs = [s for s in assets.b_roll_clips if not is_video(s)]
 
-        # 컷 길이: 후킹 짧게. xfade 겹침분(td*(n-1))을 예산에 더해 최종=나레이션 길이.
+        # 컷 길이: 초반 3컷 '빠른 전환'(후킹 retention) 후 안정. xfade 겹침분 보정.
         total = job.voice_duration or 30.0
         budget = total + _TD * (n - 1)
-        hook = max(_TD + 1.6, budget * 0.16)
-        rest = (budget - hook) / max(1, n - 1)
-        durations = [hook] + [rest] * (n - 1)
+        quick = [2.0, 1.2, 1.2][: min(3, n)]
+        rest_cuts = n - len(quick)
+        rest_each = (budget - sum(quick)) / rest_cuts if rest_cuts > 0 else 0.0
+        durations = quick + [rest_each] * rest_cuts
         durations = [max(_TD + 0.6, d) for d in durations]
 
         clips: list[Path] = []

@@ -83,6 +83,7 @@ class VideoJob:
     voice_duration: float = 0.0
     raw_video_path: str | None = None
     final_video_path: str | None = None
+    thumbnail_path: str | None = None
     youtube_id: str | None = None
     stage: Stage = Stage.SELECTED
     error: str | None = None
@@ -113,6 +114,7 @@ class VideoJob:
             voice_duration=d.get("voice_duration", 0.0),
             raw_video_path=d.get("raw_video_path"),
             final_video_path=d.get("final_video_path"),
+            thumbnail_path=d.get("thumbnail_path"),
             youtube_id=d.get("youtube_id"),
             stage=Stage(d.get("stage", "selected")),
             error=d.get("error"),

@@ -17,17 +17,18 @@ from .base import AssetProvider, ResearchProvider, ScriptProvider, UploadProvide
 
 logger = logging.getLogger("shorts_agent")
 
+# 특색(신박·휴대·전동 등) 있고 여성 타깃 친화적인 샘플 상품 풀
 _SAMPLE = [
-    ("실리콘 주방 멀티 집게", "주방용품", 8900),
-    ("욕실 물때 제거 스프레이", "청소용품", 11900),
-    ("무선 미니 핸디 선풍기", "생활가전", 15900),
-    ("폼클렌징 모공 클렌저", "뷰티", 13500),
-    ("접이식 다용도 수납 정리함", "수납정리", 9900),
-    ("저소음 미니 가습기", "생활가전", 19900),
-    ("발 각질 제거 풋파일", "뷰티", 6900),
-    ("논슬립 옷걸이 50개입", "수납정리", 12900),
-    ("향기 오래가는 섬유향수", "생활용품", 10900),
-    ("LED 메이크업 거울", "뷰티", 22900),
+    ("LED 터치 무드등 미니 가습기", "생활가전", 23900),
+    ("냉온 진동 아이마사지기", "뷰티", 29900),
+    ("무선 미니 휴대용 고데기", "뷰티", 21900),
+    ("진동 실리콘 클렌징 브러시", "뷰티", 14900),
+    ("목걸이형 핸즈프리 선풍기", "생활가전", 16900),
+    ("자동 거품 디스펜서", "주방용품", 19900),
+    ("전동 발뒤꿈치 풋케어", "뷰티", 18900),
+    ("접이식 실리콘 트래블 물병", "여행용품", 12900),
+    ("무드 캔들 워머 조명", "인테리어", 25900),
+    ("초미니 휴대용 의류 보풀제거기", "생활용품", 9900),
 ]
 
 _HOOK_TMPL = {
@@ -157,6 +158,7 @@ class MockUpload(UploadProvider):
         vid = f"DRYRUN-{job.job_id}"
         meta = {
             "would_upload": job.final_video_path,
+            "thumbnail": job.thumbnail_path,
             "title": f"[광고] {job.script.title}",
             "disclosure_first_line": job.script.disclosure_text,
             "deeplink": job.product.coupang_deeplink,

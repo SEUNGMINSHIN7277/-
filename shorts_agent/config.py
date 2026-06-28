@@ -55,14 +55,21 @@ class Settings:
     anthropic_api_key: str = ""
     llm_model: str = "claude-sonnet-4-6"   # 대본 생성(비용/품질 균형). 필요시 opus로.
 
+    tts_provider: str = "elevenlabs"   # elevenlabs|clova|typecast
     elevenlabs_api_key: str = ""
     elevenlabs_voice_id: str = ""      # 채널 페르소나 고정용
     elevenlabs_model: str = "eleven_multilingual_v2"
+    clova_client_id: str = ""
+    clova_client_secret: str = ""
+    clova_speaker: str = "nara"
+    typecast_api_key: str = ""
+    typecast_actor_id: str = ""
 
     pexels_api_key: str = ""
 
     youtube_client_secret_file: str = ""   # OAuth client secret json
-    youtube_token_file: str = ""           # 저장된 토큰(refresh) json
+    youtube_token_file: str = ""           # 업로드 토큰 json
+    youtube_analytics_token_file: str = "" # Analytics 읽기 토큰 json(피드백 루프)
     youtube_privacy: str = "private"       # private|unlisted|public (초기엔 private 권장)
 
     @classmethod
@@ -92,12 +99,19 @@ class Settings:
             coupang_sub_id=os.environ.get("COUPANG_SUB_ID", ""),
             anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
             llm_model=os.environ.get("LLM_MODEL", "claude-sonnet-4-6"),
+            tts_provider=os.environ.get("TTS_PROVIDER", "elevenlabs"),
             elevenlabs_api_key=os.environ.get("ELEVENLABS_API_KEY", ""),
             elevenlabs_voice_id=os.environ.get("ELEVENLABS_VOICE_ID", ""),
             elevenlabs_model=os.environ.get("ELEVENLABS_MODEL", "eleven_multilingual_v2"),
+            clova_client_id=os.environ.get("CLOVA_CLIENT_ID", ""),
+            clova_client_secret=os.environ.get("CLOVA_CLIENT_SECRET", ""),
+            clova_speaker=os.environ.get("CLOVA_SPEAKER", "nara"),
+            typecast_api_key=os.environ.get("TYPECAST_API_KEY", ""),
+            typecast_actor_id=os.environ.get("TYPECAST_ACTOR_ID", ""),
             pexels_api_key=os.environ.get("PEXELS_API_KEY", ""),
             youtube_client_secret_file=os.environ.get("YOUTUBE_CLIENT_SECRET_FILE", ""),
             youtube_token_file=os.environ.get("YOUTUBE_TOKEN_FILE", ""),
+            youtube_analytics_token_file=os.environ.get("YOUTUBE_ANALYTICS_TOKEN_FILE", ""),
             youtube_privacy=os.environ.get("YOUTUBE_PRIVACY", "private"),
         )
 

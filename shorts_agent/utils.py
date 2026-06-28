@@ -292,6 +292,45 @@ def video_motion_clip(src: str, out: Path, duration: float) -> Path:
     return out
 
 
+_THUMB_ASS = """[Script Info]
+ScriptType: v4.00+
+PlayResX: {w}
+PlayResY: {h}
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, OutlineColour, BackColour, Bold, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Tt,{font},108,&H0000F0FF,&H00101010,&HC0000000,1,1,9,5,8,70,70,150,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,9:59:59.99,Tt,,70,70,150,,{text}
+"""
+
+
+def make_thumbnail(out_jpg: Path, bg_image: str | None, hook: str, font: Path,
+                   *, c0: str = "0x141E30", c1: str = "0x3A1C71") -> Path:
+    """후킹 문구가 박힌 세로 썸네일(1080x1920) 1장 생성."""
+    ass = out_jpg.with_suffix(".thumb.ass")
+    ass.write_text(_THUMB_ASS.format(w=WIDTH, h=HEIGHT, font=_FONT_NAME,
+                                     text=_ass_escape(hook)), encoding="utf-8")
+    ass_vf = f"ass={_ass_filter_path(ass)}:fontsdir={_ass_filter_path(font.parent)}"
+    if bg_image and not is_video(bg_image):
+        fc = (f"[0]scale={WIDTH}:{HEIGHT}:force_original_aspect_ratio=increase,"
+              f"crop={WIDTH}:{HEIGHT},gblur=sigma=30,eq=brightness=-0.08[bg];"
+              f"[0]scale={int(WIDTH*0.72)}:-1[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2+120,"
+              f"vignette,{ass_vf}")
+        run_ffmpeg(["-loop", "1", "-i", bg_image, "-frames:v", "1",
+                    "-filter_complex", fc, "-q:v", "3", str(out_jpg)], desc="thumbnail")
+    else:
+        run_ffmpeg(["-f", "lavfi", "-i", f"gradients=s={WIDTH}x{HEIGHT}:c0={c0}:c1={c1}:type=radial:rate=1",
+                    "-frames:v", "1", "-vf", f"vignette,{ass_vf}", "-q:v", "3", str(out_jpg)],
+                   desc="thumbnail")
+    ass.unlink(missing_ok=True)
+    return out_jpg
+
+
 def xfade_concat(clips: list[Path], durations: list[float], out: Path,
                  *, td: float = 0.35) -> Path:
     """클립들을 xfade 트랜지션으로 연결(영상 전용). 길이=Σd - td*(n-1)."""
