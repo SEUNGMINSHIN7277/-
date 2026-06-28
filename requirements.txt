@@ -1,0 +1,12 @@
+# --- 핵심 (dry-run 포함 모든 모드에서 필요) ---
+imageio-ffmpeg>=0.4.9      # 정적 FFmpeg 바이너리 제공 (시스템 ffmpeg 있으면 그걸 사용)
+
+# --- 실모드(API 연동) 시 필요. dry-run 에서는 불필요 ---
+anthropic>=0.40            # 대본 생성 LLM (모듈 B)
+google-api-python-client>=2.100   # YouTube 업로드 (모듈 G)
+google-auth>=2.23
+google-auth-oauthlib>=1.1
+# requests 는 사용하지 않음(urllib 표준 라이브러리로 구현). 필요 시 추가 가능.
+# python-dotenv 불필요(자체 .env 파서 내장).
+
+# Coupang / Pexels / ElevenLabs 는 표준 urllib 로 호출하므로 별도 패키지 불필요.

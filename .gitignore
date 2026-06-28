@@ -1,0 +1,14 @@
+# 비밀/환경
+.env
+
+# 생성 산출물
+output/
+*.mp4
+*.png
+!assets/**
+
+# 파이썬
+__pycache__/
+*.pyc
+.venv/
+venv/

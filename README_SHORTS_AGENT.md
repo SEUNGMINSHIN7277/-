@@ -1,0 +1,106 @@
+# 쇼핑 쇼츠 자동화 AI 에이전트 (`shorts_agent`)
+
+상품을 골라 → 후킹 대본을 쓰고 → 보이스오버·자막을 입혀 → 9:16 쇼츠를 만들고 → 유튜브에 올리는
+**반자동(+옵션상 무인) 파이프라인.** 설계 근거와 정책/법규 배경은 [`SHOPPING_SHORTS_AGENT_SPEC.md`](./SHOPPING_SHORTS_AGENT_SPEC.md) 참고.
+
+> 핵심 철학(명세 0): **"양산"이 아니라 "전환되는 고품질 쇼츠를 정책 안에서 지속 발행".**
+> 그래서 ① 포맷 로테이션 + 유사도 검사로 *양산 신호*를 막고, ② 발행 전 *컴플라이언스 게이트*(공정위 표시·합성공개)를 강제하며, ③ 기본은 *사람 검수 게이트*를 둔다.
+
+---
+
+## 빠른 시작 (키 없이 바로 시연 — DRY-RUN)
+
+키가 하나도 없어도 **실제 FFmpeg 로 .mp4 를 끝까지 생성**합니다(외부 API는 mock, 음성은 무음+타이밍).
+
+```bash
+pip install imageio-ffmpeg                 # dry-run 은 이거 하나면 충분
+python -m shorts_agent --dry-run run --seeds "주방,청소,뷰티,수납정리,생활가전" --count 5 --auto
+ls output/                                 # <job_id>.mp4 + <job_id>.meta.json 생성
+```
+
+- 폰트: `assets/fonts/NanumGothic.ttf` (한국어 자막용, 저장소에 포함).
+- 산출물: `output/<job_id>.mp4` (9:16, 자막+공정위 표시 인트로 포함), `output/<job_id>.meta.json` (업로드될 제목/설명/딥링크/해시태그).
+
+---
+
+## 명령어
+
+| 명령 | 설명 |
+|---|---|
+| `run --seeds "a,b" --count N [--auto]` | 일일 배치. `--auto` 면 게이트 없이 무인 발행 |
+| `list` | 잡 목록/현재 단계 |
+| `show <job_id>` | 대본·경로 등 상세 |
+| `gate-a <job_id> [--reject]` | 🚦 상품·후킹 승인 → 통과 시 제작(에셋·보이스·렌더·자막) 후 GATE_B |
+| `gate-b <job_id> [--reject]` | 🚦 최종 검수 승인 → 컴플라이언스 통과 시 업로드 |
+
+상태는 `output/state.json` 에 저장되어 게이트 승인이 여러 번의 호출에 걸쳐 동작합니다.
+
+### 반자동(권장) 흐름
+```bash
+python -m shorts_agent run --seeds "주방,청소,뷰티" --count 5   # GATE_A 에서 정지
+python -m shorts_agent gate-a <job_id>                          # 상품·후킹 OK → 영상 제작
+python -m shorts_agent gate-b <job_id>                          # 최종 30초 검수 → 발행
+```
+
+---
+
+## 실모드(실제 API 연동)
+
+```bash
+pip install -r requirements.txt
+cp .env.example .env      # 값 채우기
+python -m shorts_agent run --seeds "주방,청소,뷰티" --count 5
+```
+
+필요 키(`.env`): `COUPANG_ACCESS_KEY/SECRET_KEY`(상품·딥링크), `ANTHROPIC_API_KEY`(대본),
+`ELEVENLABS_API_KEY/VOICE_ID`(음성), `PEXELS_API_KEY`(보조 컷), `YOUTUBE_TOKEN_FILE`(업로드).
+**일부만 채워도** 해당 모듈만 실제로 동작하고 나머지는 자동으로 mock 으로 폴백합니다(점진적 도입).
+
+> YouTube 업로드 OAuth 토큰(`YOUTUBE_TOKEN_FILE`)은 `google-auth-oauthlib` 로 최초 1회
+> 동의 후 발급한 authorized-user json 을 사용합니다. 스코프: `youtube.upload`.
+
+---
+
+## 아키텍처 (모듈 = 교체 가능)
+
+```
+research(쿠팡) → script(LLM, 포맷로테이션+유사도) → [GATE A]
+  → asset(제품컷+Pexels보조) → voice(ElevenLabs) → render(FFmpeg) → caption(libass, 안전영역)
+  → [컴플라이언스 자동검증] → [GATE B] → upload(YouTube, 표시문구/합성공개 자동) → feedback
+```
+
+- `shorts_agent/providers/base.py` — 추상 인터페이스(8개 모듈).
+- `shorts_agent/providers/*.py` — 실제 구현(`coupang/llm/pexels/tts/render/caption/youtube/feedback`) + `mock.py`.
+- `shorts_agent/pipeline.py` — 오케스트레이터(게이트·재시도·일일 캡·양산방지·컴플라이언스).
+- `shorts_agent/factory.py` — 설정에 따라 실/mock 프로바이더 조립.
+
+### 양산 방지(유튜브 비진정성 정책 대응)
+- **포맷 로테이션**: `질문형/실측형/비교형/실패담형/정보형/리액션형` 을 매 영상 순환.
+- **유사도 검사**: 직전 20개 후킹과 코사인 유사(토큰 Jaccard+시퀀스) 임계 초과 시 포맷 바꿔 재생성, 발행 전 재검사.
+
+### 컴플라이언스 게이트(발행 전 강제)
+- 공정위 표시문구 **존재 + 위치(제목/설명 첫 줄/인트로 0~2.5초 자막)** 자동 삽입.
+- **모호·조건부 표현 금칙어** 차단(예: "수수료를 지급받을 수 있음").
+- YouTube **합성/변경 콘텐츠 공개** 플래그(`containsSyntheticMedia=True`).
+
+---
+
+## 매일 5개 지속 발행 (스케줄링)
+
+`videos.insert` 할당량은 2025.12.4 이후 ≈100유닛(하루 ~100개 가능)이라 **API 가 5개를 제한하지 않습니다.**
+"5개"는 품질·정책·전환을 위한 전략 캡(`DAILY_CAP`)입니다. 할당량 리셋은 **태평양시(PT) 자정** 기준이니 그에 맞춰 cron 을 거세요.
+
+예) 매일 KST 09:00 에 배치 생성(반자동: GATE_A 까지) — crontab:
+```cron
+0 9 * * *  cd /path/to/repo && /usr/bin/python3 -m shorts_agent run --seeds "주방,청소,뷰티,수납정리,생활가전" --count 5 >> output/cron.log 2>&1
+```
+완전 무인으로 굴리려면 `--auto` 를 붙이되, **유튜브 비진정성/공정위 리스크를 본인이 감수**해야 합니다. 초기에는 반자동(사람 30초 검수)을 강력 권장합니다.
+
+---
+
+## 한계 / 다음 단계 (정직한 고지)
+- **에셋이 진짜 병목**(명세 1-3): 스톡엔 *특정 제품* 영상이 없습니다. 전환을 내려면 제조사 제공 소재나
+  직접 촬영 컷을 `AssetProvider` 에 연결해야 합니다. 현재 보조 컷만 Pexels, 제품 컷은 상품 이미지/플레이스홀더.
+- **음성**: dry-run 은 무음(타이밍만). 실모드에서 ElevenLabs(또는 CLOVA/Typecast 로 교체) 연결 필요.
+- **피드백 루프(모듈 H)**: 현재 로컬 집계 골격. YouTube Analytics + 쿠팡 실적 연동은 `feedback.py` 의 TODO.
+- **드라마틱한 편집(전환/줌/효과)**: 현재는 컷 분할+자막 중심. 트랜지션/모션은 렌더러 확장 포인트.
