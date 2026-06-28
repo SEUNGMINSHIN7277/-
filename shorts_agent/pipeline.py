@@ -114,6 +114,7 @@ class ShortsAgent:
             return job
         try:
             wd = self.s.output_dir / job.job_id
+            wd.mkdir(parents=True, exist_ok=True)
             s, p = job.script, job.product
 
             job.assets = with_retry(

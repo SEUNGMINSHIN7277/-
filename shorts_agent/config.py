@@ -41,6 +41,8 @@ class Settings:
     output_dir: Path = field(default_factory=lambda: DEFAULT_OUTPUT)
     font_path: Path = field(default_factory=lambda: DEFAULT_FONT)
     music_dir: Path = field(default_factory=lambda: ROOT / "assets" / "music")
+    products_dir: Path = field(default_factory=lambda: ROOT / "assets" / "products")
+    broll_dir: Path = field(default_factory=lambda: ROOT / "assets" / "broll")
 
     # --- 컴플라이언스(명세 2-1) ---
     disclosure_text: str = "쿠팡파트너스 활동으로 일정액의 수수료를 제공받습니다"
@@ -80,6 +82,8 @@ class Settings:
             output_dir=Path(os.environ.get("OUTPUT_DIR", str(DEFAULT_OUTPUT))),
             font_path=Path(os.environ.get("FONT_PATH", str(DEFAULT_FONT))),
             music_dir=Path(os.environ.get("MUSIC_DIR", str(ROOT / "assets" / "music"))),
+            products_dir=Path(os.environ.get("PRODUCTS_DIR", str(ROOT / "assets" / "products"))),
+            broll_dir=Path(os.environ.get("BROLL_DIR", str(ROOT / "assets" / "broll"))),
             disclosure_text=os.environ.get(
                 "DISCLOSURE_TEXT", "쿠팡파트너스 활동으로 일정액의 수수료를 제공받습니다"
             ),

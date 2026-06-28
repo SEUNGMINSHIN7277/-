@@ -51,11 +51,20 @@ def build_providers(s: Settings) -> Providers:
         logger.warning("Anthropic 키 없음 → MockScript 폴백")
         script = mock.MockScript()
 
+    # 에셋: 로컬 실소재(직접촬영/제조사) 우선 + Pexels 보조. 둘 다 없으면 mock.
+    from .providers.local_assets import LocalAssetProvider
+    pexels = None
     if s.pexels_api_key:
         from .providers.pexels import PexelsAssetProvider
-        asset = PexelsAssetProvider(s.pexels_api_key)
+        pexels = PexelsAssetProvider(s.pexels_api_key)
+    has_local = (s.products_dir.exists() and any(s.products_dir.iterdir())) or \
+                (s.broll_dir.exists() and any(s.broll_dir.iterdir()))
+    if has_local or pexels:
+        asset = LocalAssetProvider(s, fallback=pexels)
+        logger.info("에셋: LocalAssetProvider (로컬 실소재 우선%s)",
+                    " + Pexels 보조" if pexels else "")
     else:
-        logger.warning("Pexels 키 없음 → MockAsset(플레이스홀더) 폴백")
+        logger.warning("로컬 소재/Pexels 키 없음 → MockAsset(그라데이션) 폴백")
         asset = mock.MockAsset(s)
 
     if s.elevenlabs_api_key and s.elevenlabs_voice_id:

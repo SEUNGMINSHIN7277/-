@@ -59,6 +59,21 @@ python -m shorts_agent run --seeds "주방,청소,뷰티" --count 5
 > YouTube 업로드 OAuth 토큰(`YOUTUBE_TOKEN_FILE`)은 `google-auth-oauthlib` 로 최초 1회
 > 동의 후 발급한 authorized-user json 을 사용합니다. 스코프: `youtube.upload`.
 
+### 실제 제품 소재 연결 (전환의 핵심!)
+스톡엔 특정 제품 영상이 없습니다. **직접 촬영/제조사 제공 소재**를 폴더에 넣으면 최우선 사용됩니다.
+```
+assets/products/<상품키>/clip1.mp4, photo1.jpg   # 상품키=상품명 일부 또는 product_id (없으면 _default)
+assets/broll/                                     # 공용 보조 컷
+```
+우선순위: **로컬 제품 소재 → 로컬 b-roll → (있으면)Pexels → 움직이는 그라데이션**.
+
+### YouTube 업로드 토큰 발급
+```bash
+# Google Cloud: 프로젝트 → YouTube Data API v3 사용 → OAuth 클라이언트(데스크톱) → client_secret.json
+python -m shorts_agent.auth_youtube client_secret.json youtube_token.json
+# → .env 에 YOUTUBE_TOKEN_FILE=youtube_token.json
+```
+
 ---
 
 ## 아키텍처 (모듈 = 교체 가능)
