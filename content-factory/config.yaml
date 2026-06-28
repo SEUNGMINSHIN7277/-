@@ -1,0 +1,30 @@
+# Creative direction + look. Secrets go in .env (see .env.example).
+
+# --- providers ---
+llm_provider: anthropic     # anthropic | seed  (seed = rotate the hand-written library)
+tts_provider: demo          # elevenlabs | azure | google | demo  (demo = offline placeholder)
+avatar_provider: svg        # svg | files  (files = drop <role>.png in assets/avatars/)
+publish_provider: none      # youtube | none
+
+channel_name: "Korean Call Diaries"
+niche: "cute & funny Korean family/couple phone-call skits"
+
+# --- look (all on-screen text is English; only the TTS audio is Korean) ---
+title_color: "FFE53B"       # yellow
+color_a: "FFFFFF"           # speaker A subtitle (white)
+color_b: "FF8FC7"           # speaker B subtitle (pink)
+waveform_color: "FFFFFF"
+caption_font: "DejaVu Sans"
+dim_inactive: 0.45          # brightness of the non-speaking avatar (0..1)
+
+# --- pacing (seconds) ---
+lead_in: 0.45
+gap: 0.22
+lead_out: 0.70
+syllables_per_sec: 4.2      # offline duration estimate when not using real TTS
+
+# --- canvas ---
+width: 1080
+height: 1920
+fps: 30
+supersample: 2

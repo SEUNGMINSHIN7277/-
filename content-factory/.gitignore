@@ -1,0 +1,17 @@
+# secrets
+.env
+secrets/
+
+# generated media (regenerate with `python -m factory ...`)
+output/
+assets/avatars/*.png
+assets/avatars/*.html
+assets/music/*.mp3
+assets/music/*.wav
+
+# python / node
+__pycache__/
+*.pyc
+node_modules/
+.venv/
+venv/

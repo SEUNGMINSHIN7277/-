@@ -1,0 +1,19 @@
+# --- core (required) ---
+imageio-ffmpeg>=0.4.9      # bundles a static ffmpeg (no apt/root needed)
+requests>=2.31
+PyYAML>=6.0
+
+# --- script generation (optional: LLM_PROVIDER=anthropic) ---
+anthropic>=0.39
+
+# --- word-level caption timing (optional: USE_WHISPER=1) ---
+# faster-whisper>=1.0
+
+# --- YouTube publishing (optional: PUBLISH_PROVIDER=youtube) ---
+# google-api-python-client>=2.0
+# google-auth>=2.0
+# google-auth-oauthlib>=1.0
+
+# NOTE: the renderer also needs Node + Playwright Chromium:
+#   npm install            (installs playwright from package.json)
+#   npx playwright install chromium

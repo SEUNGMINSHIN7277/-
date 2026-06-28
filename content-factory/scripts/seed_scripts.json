@@ -1,0 +1,109 @@
+[
+  {
+    "id": "dad_daughter_rice",
+    "pair": "dad_daughter",
+    "title_en": "Dad Gets Outsmarted\nBy His 4-Year-Old",
+    "characters": {
+      "A": {"id": "A", "role": "dad", "label": "Dad", "corner": "top_left"},
+      "B": {"id": "B", "role": "little_girl", "label": "Daughter", "corner": "bottom_right"}
+    },
+    "lines": [
+      {"speaker": "A", "tts": "여보세요?", "en": "Hello?"},
+      {"speaker": "B", "tts": "여보데요~ 아빠 지금 어디야아~?", "en": "Hewwo~ Daddy, where are you?", "emote": "shy"},
+      {"speaker": "A", "tts": "아빠 일하구 있지. 우리 딸 밥 머거써?", "en": "At work, sweetie. Did my girl eat?"},
+      {"speaker": "B", "tts": "응! 만두 머거써.", "en": "Yeah! I had dumplings.", "emote": "laugh"},
+      {"speaker": "A", "tts": "만두? 밥은?", "en": "Dumplings? What about rice?"},
+      {"speaker": "B", "tts": "밥이 어부써서 만두 머거짜나.", "en": "There was no wice, so I ate dumpwings."},
+      {"speaker": "A", "tts": "밥이 왜 없어... 아빠가 사놨는데?", "en": "No rice? But Daddy bought some..."},
+      {"speaker": "B", "tts": "아빠! 쌀이 왜 떠러져써 쌀이!", "en": "Daddy! Why did we run out of WICE?!", "emote": "pout"},
+      {"speaker": "A", "tts": "응? 싸다고?", "en": "Huh? It's... cheap?"},
+      {"speaker": "B", "tts": "아니! 쌀! 이! 왜! 떠러졌냐교!", "en": "NO! WHY! DID! THE! RICE! RUN OUT!", "emote": "pout"},
+      {"speaker": "A", "tts": "차라고...?", "en": "...the car?"},
+      {"speaker": "B", "tts": "아아 진짜 웰케 말귀를 못 알아드러!", "en": "Ugh, why can't you understand me?!", "emote": "pout"},
+      {"speaker": "A", "tts": "미안해 미안해, 다시 말해줘.", "en": "Sorry, sorry — say it again", "emote": "laugh"},
+      {"speaker": "B", "tts": "쌀. 안 떠러지게. 잘 해야지이.", "en": "Don't. Let the wice. Run out. Okay?"},
+      {"speaker": "A", "tts": "알게써. 아빠가 쌀 안 떨어지게 열심히 일할게~", "en": "Okay. Daddy will work hard so we never run out~"},
+      {"speaker": "B", "tts": "구래! 사랑해 아빠~", "en": "Otay! Wuv you Daddy~", "emote": "shy"}
+    ],
+    "hashtags": ["cute", "korean", "dadanddaughter", "funny", "family", "kids"],
+    "description_en": "When your 4-year-old runs the household. Cute Korean call skit (EN subs). New skits daily!"
+  },
+  {
+    "id": "couple_receipt",
+    "pair": "couple",
+    "title_en": "She Spent My Money\n& Made It MY Fault",
+    "characters": {
+      "A": {"id": "A", "role": "young_man", "label": "Him", "corner": "top_left"},
+      "B": {"id": "B", "role": "young_woman", "label": "Her", "corner": "bottom_right"}
+    },
+    "lines": [
+      {"speaker": "A", "tts": "자기야 뭐해?", "en": "Babe, whatcha doing?"},
+      {"speaker": "B", "tts": "자기 생각하지~", "en": "Thinking about you~", "emote": "shy"},
+      {"speaker": "A", "tts": "에이 거짓말.", "en": "Yeah right, liar."},
+      {"speaker": "B", "tts": "진짜야! ...아 근데 자기야.", "en": "It's true! ...oh, but babe."},
+      {"speaker": "A", "tts": "응?", "en": "Hm?"},
+      {"speaker": "B", "tts": "나 오늘 통장에서 십만원이 어디 갔게?", "en": "Guess where 100k won from my account went today?"},
+      {"speaker": "A", "tts": "...어디 갔는데.", "en": "...where did it go."},
+      {"speaker": "B", "tts": "자기 생각하다가 옷 사써.", "en": "I was thinking of you and bought clothes."},
+      {"speaker": "A", "tts": "그게 왜 내 생각이야.", "en": "How is THAT thinking of me?"},
+      {"speaker": "B", "tts": "자기한테 예뻐 보이려고~", "en": "So I look pretty for you~", "emote": "shy"},
+      {"speaker": "A", "tts": "...논리 미쳤다.", "en": "...that logic is insane."},
+      {"speaker": "B", "tts": "그래서 화났어?", "en": "So... are you mad?", "emote": "pout"},
+      {"speaker": "A", "tts": "아니... 영수증 보내봐. 얼마야.", "en": "No... send me the receipt. How much.", "emote": "laugh"},
+      {"speaker": "B", "tts": "사랑해 자기야~", "en": "Love you babe~", "emote": "shy"}
+    ],
+    "hashtags": ["couple", "korean", "funny", "relatable", "relationship", "skit"],
+    "description_en": "The logic is undefeated. Cute Korean couple call skit (EN subs)."
+  },
+  {
+    "id": "grandma_data",
+    "pair": "grandma_grandchild",
+    "title_en": "Grandma Wants Me To\n'Give' Her Data",
+    "characters": {
+      "A": {"id": "A", "role": "grandma", "label": "Grandma", "corner": "top_left"},
+      "B": {"id": "B", "role": "teen_boy", "label": "Grandson", "corner": "bottom_right"}
+    },
+    "lines": [
+      {"speaker": "A", "tts": "아가, 할미다. 핸드폰이 안 돼야.", "en": "Sweetie, it's grandma. My phone's broken."},
+      {"speaker": "B", "tts": "할머니, 뭐가 안 돼요?", "en": "Grandma, what's not working?"},
+      {"speaker": "A", "tts": "이 카톡이 자꾸 노란 창이 떠야.", "en": "This KakaoTalk keeps popping a yellow screen."},
+      {"speaker": "B", "tts": "할머니, 그게 카톡이에요.", "en": "Grandma... that IS KakaoTalk."},
+      {"speaker": "A", "tts": "아니, 그 와이파이를 눌렀는데.", "en": "No, I pressed the WiFi."},
+      {"speaker": "B", "tts": "와이파이를 왜 눌러요 ㅋㅋ", "en": "Why'd you press WiFi, lol"},
+      {"speaker": "A", "tts": "그럼 데이터를 줘야지!", "en": "Then give me the data!", "emote": "pout"},
+      {"speaker": "B", "tts": "데이터를 어떻게 줘요 할머니...", "en": "How do I 'give' you data, grandma..."},
+      {"speaker": "A", "tts": "니 친구들은 다 준다던데?", "en": "Your friends all 'give' it, I heard."},
+      {"speaker": "B", "tts": "그건 나눠 쓰는 거고요...", "en": "That's... sharing it..."},
+      {"speaker": "A", "tts": "그래 그거! 빨리 나눠줘.", "en": "Yes, THAT! Hurry and share!"},
+      {"speaker": "B", "tts": "알겠어요 할머니, 이따 갈게요.", "en": "Okay grandma, I'll come by later", "emote": "laugh"},
+      {"speaker": "A", "tts": "올 때 호빵 사와라.", "en": "Bring steamed buns when you come."}
+    ],
+    "hashtags": ["grandma", "korean", "funny", "family", "wholesome", "tech"],
+    "description_en": "Grandma's tech support arc. Cute Korean call skit (EN subs)."
+  },
+  {
+    "id": "dad_daughter_allowance",
+    "pair": "dad_daughter",
+    "title_en": "My Daughter's Salary\nNegotiation Is Scary",
+    "characters": {
+      "A": {"id": "A", "role": "dad", "label": "Dad", "corner": "top_left"},
+      "B": {"id": "B", "role": "little_girl", "label": "Daughter", "corner": "bottom_right"}
+    },
+    "lines": [
+      {"speaker": "B", "tts": "아빠~ 나 부탁이 있는데.", "en": "Daddy~ I have a favow.", "emote": "shy"},
+      {"speaker": "A", "tts": "어 뭔데, 우리 딸.", "en": "Sure, what is it sweetie."},
+      {"speaker": "B", "tts": "용돈 천원만 올려주면 안 돼?", "en": "Can you waise my allowance by 1,000?"},
+      {"speaker": "A", "tts": "천원? 왜?", "en": "1,000? Why?"},
+      {"speaker": "B", "tts": "친구들은 다 오천원이야.", "en": "All my fwiends get 5,000."},
+      {"speaker": "A", "tts": "오천원?! 아빠 어릴 땐 오백원이었어.", "en": "5,000?! When I was little it was 500."},
+      {"speaker": "B", "tts": "아빠, 그건 옛날이자나.", "en": "Daddy, that was the old days."},
+      {"speaker": "A", "tts": "...맞는 말이네.", "en": "...that's fair."},
+      {"speaker": "B", "tts": "그치? 그러니까 올려줘잉~", "en": "Wight? So waise it, pwease~", "emote": "shy"},
+      {"speaker": "A", "tts": "대신 설거지 도와주기.", "en": "Only if you help with the dishes."},
+      {"speaker": "B", "tts": "...아빠 그냥 오백원 줘.", "en": "...Daddy, just give me 500.", "emote": "pout"},
+      {"speaker": "A", "tts": "야! 방금 전엔 천원이라며!", "en": "Hey! You JUST said 1,000!", "emote": "laugh"}
+    ],
+    "hashtags": ["cute", "korean", "dadanddaughter", "funny", "kids", "family"],
+    "description_en": "She folded the second chores were mentioned. Cute Korean call skit (EN subs)."
+  }
+]
