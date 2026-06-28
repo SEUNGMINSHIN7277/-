@@ -44,6 +44,30 @@ python -m shorts_agent gate-b <job_id>                          # 최종 30초 �
 
 ---
 
+## 💸 무자본(무료) 구성 — 0원으로 실제 발행까지
+
+| 부품 | 무료 선택 | 비용 |
+|---|---|---|
+| 두뇌(대본) | **Google Gemini** 무료 키 (aistudio.google.com) | 0원(무료 티어) |
+| 목소리 | **edge-tts** (`TTS_PROVIDER=edge`, 키 불필요) | 0원 |
+| 상품/딥링크 | 쿠팡파트너스 **수동** 딥링크(사이트에서 생성) 또는 API(승인 시) | 0원 |
+| 영상 소재 | **본인 촬영**(`assets/products/`) 또는 Pexels 무료 키 | 0원 |
+| 배경음악 | 유튜브 스튜디오 **오디오 보관함**(무료) → `assets/music/` | 0원 |
+| 렌더링 | FFmpeg(내장) | 0원 |
+| 업로드/트렌드 | YouTube Data API(무료 할당량) | 0원 |
+
+**무자본 빠른 시작:**
+```bash
+pip install -r requirements.txt
+cp .env.example .env
+#  .env 에 GEMINI_API_KEY 만 넣으면 끝(나머지는 무료 기본값/수동).
+#  TTS_PROVIDER=edge (기본), 상품은 수동 딥링크로 시작.
+python -m shorts_agent run --seeds "주방,뷰티" --count 3      # 반자동(게이트 검수)
+```
+> Gemini 키 하나만 있어도 실모드로 동작합니다(쿠팡 API·음성 키 불필요).
+> 쿠팡 API 가 아직 승인 안 났으면: 파트너스 사이트에서 상품별 딥링크를 직접 만들어
+> 영상 설명/고정댓글에 붙이세요(시스템은 영상·자막·썸네일·업로드를 담당).
+
 ## 실모드(실제 API 연동)
 
 ```bash

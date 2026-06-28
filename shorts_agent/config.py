@@ -54,8 +54,11 @@ class Settings:
 
     anthropic_api_key: str = ""
     llm_model: str = "claude-sonnet-4-6"   # 대본 생성(비용/품질 균형). 필요시 opus로.
+    gemini_api_key: str = ""               # 무료 LLM 옵션(Google AI Studio 무료 키)
+    gemini_model: str = "gemini-1.5-flash"
 
-    tts_provider: str = "elevenlabs"   # elevenlabs|clova|typecast
+    tts_provider: str = "edge"         # edge(무료)|elevenlabs|clova|typecast
+    edge_voice: str = "ko-KR-SunHiNeural"  # 무료 edge-tts 한국어 보이스
     elevenlabs_api_key: str = ""
     elevenlabs_voice_id: str = ""      # 채널 페르소나 고정용
     elevenlabs_model: str = "eleven_multilingual_v2"
@@ -105,7 +108,10 @@ class Settings:
             coupang_sub_id=os.environ.get("COUPANG_SUB_ID", ""),
             anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
             llm_model=os.environ.get("LLM_MODEL", "claude-sonnet-4-6"),
-            tts_provider=os.environ.get("TTS_PROVIDER", "elevenlabs"),
+            gemini_api_key=os.environ.get("GEMINI_API_KEY", ""),
+            gemini_model=os.environ.get("GEMINI_MODEL", "gemini-1.5-flash"),
+            tts_provider=os.environ.get("TTS_PROVIDER", "edge"),
+            edge_voice=os.environ.get("EDGE_VOICE", "ko-KR-SunHiNeural"),
             elevenlabs_api_key=os.environ.get("ELEVENLABS_API_KEY", ""),
             elevenlabs_voice_id=os.environ.get("ELEVENLABS_VOICE_ID", ""),
             elevenlabs_model=os.environ.get("ELEVENLABS_MODEL", "eleven_multilingual_v2"),
@@ -127,7 +133,8 @@ class Settings:
 
         # dry_run 자동 판정: 명시값 우선, 없으면 핵심 키 유무로 결정
         if dry_run is None:
-            dry_run = b("DRY_RUN", not (s.anthropic_api_key and s.coupang_access_key))
+            # 두뇌(LLM)가 하나라도 있으면 실모드 가능(쿠팡/음성은 무료부품·수동으로 대체).
+            dry_run = b("DRY_RUN", not (s.anthropic_api_key or s.gemini_api_key))
         s.dry_run = dry_run
         s.auto = auto if auto is not None else b("AUTO", False)
         s.naturalness_pass = b("NATURALNESS_PASS", True)

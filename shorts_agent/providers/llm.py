@@ -174,6 +174,34 @@ class LLMScriptProvider(ScriptProvider):
         return data
 
 
+class GeminiScriptProvider(LLMScriptProvider):
+    """무료 LLM 옵션: Google Gemini(무료 티어). REST 호출만 사용(SDK 불필요)."""
+
+    def __init__(self, api_key: str, model: str = "gemini-1.5-flash", naturalness_pass: bool = True):
+        super().__init__(api_key, model, naturalness_pass)
+
+    def _ask(self, prompt: str, max_tokens: int = 2000) -> str:
+        import urllib.request
+
+        url = (f"https://generativelanguage.googleapis.com/v1beta/models/"
+               f"{self.model}:generateContent?key={self.api_key}")
+        body = json.dumps({
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {"maxOutputTokens": max_tokens, "temperature": 0.9},
+        }).encode("utf-8")
+        req = urllib.request.Request(url, data=body, method="POST")
+        req.add_header("Content-Type", "application/json")
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                data = json.loads(r.read().decode("utf-8"))
+            return "".join(
+                p.get("text", "")
+                for p in data["candidates"][0]["content"]["parts"]
+            ).strip()
+        except Exception as e:
+            raise StageError(Stage.SCRIPTED, f"Gemini 호출 실패: {e}", retryable=True) from e
+
+
 def _extract_json(text: str) -> dict | None:
     text = text.strip()
     if text.startswith("```"):

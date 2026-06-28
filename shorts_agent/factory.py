@@ -27,23 +27,33 @@ def build_trend_miner(s: Settings):
 
 
 def _build_voice(s: Settings):
-    """TTS_PROVIDER 우선, 없으면 사용 가능한 키로 자동 선택."""
+    """TTS_PROVIDER 우선, 없으면 사용 가능한 키로 자동 선택. 최종 폴백=무료 edge-tts."""
     p = (s.tts_provider or "").lower()
-    if p == "clova" or (p != "elevenlabs" and s.clova_client_id and s.clova_client_secret):
-        if s.clova_client_id and s.clova_client_secret:
-            from .providers.tts_kr import CLOVAVoiceProvider
-            logger.info("TTS: Naver CLOVA Voice")
-            return CLOVAVoiceProvider(s.clova_client_id, s.clova_client_secret, s.clova_speaker)
-    if p == "typecast" or (p != "elevenlabs" and s.typecast_api_key and s.typecast_actor_id):
-        if s.typecast_api_key and s.typecast_actor_id:
-            from .providers.tts_kr import TypecastVoiceProvider
-            logger.info("TTS: Typecast")
-            return TypecastVoiceProvider(s.typecast_api_key, s.typecast_actor_id)
-    if s.elevenlabs_api_key and s.elevenlabs_voice_id:
+
+    def edge():
+        from .providers.tts_free import EdgeTTSVoiceProvider
+        logger.info("TTS: edge-tts 무료(%s)", s.edge_voice)
+        return EdgeTTSVoiceProvider(s.edge_voice)
+
+    if p == "edge":
+        return edge()
+    if p == "clova" and s.clova_client_id and s.clova_client_secret:
+        from .providers.tts_kr import CLOVAVoiceProvider
+        logger.info("TTS: Naver CLOVA Voice")
+        return CLOVAVoiceProvider(s.clova_client_id, s.clova_client_secret, s.clova_speaker)
+    if p == "typecast" and s.typecast_api_key and s.typecast_actor_id:
+        from .providers.tts_kr import TypecastVoiceProvider
+        logger.info("TTS: Typecast")
+        return TypecastVoiceProvider(s.typecast_api_key, s.typecast_actor_id)
+    if p == "elevenlabs" and s.elevenlabs_api_key and s.elevenlabs_voice_id:
         from .providers.tts import ElevenLabsVoiceProvider
         logger.info("TTS: ElevenLabs")
         return ElevenLabsVoiceProvider(s.elevenlabs_api_key, s.elevenlabs_voice_id, s.elevenlabs_model)
-    return None
+    # 키 기반 자동 + 무료 폴백
+    if s.elevenlabs_api_key and s.elevenlabs_voice_id:
+        from .providers.tts import ElevenLabsVoiceProvider
+        return ElevenLabsVoiceProvider(s.elevenlabs_api_key, s.elevenlabs_voice_id, s.elevenlabs_model)
+    return edge()   # 무료·키 불필요
 
 
 def build_providers(s: Settings) -> Providers:
@@ -91,8 +101,13 @@ def build_providers(s: Settings) -> Providers:
     if s.anthropic_api_key:
         from .providers.llm import LLMScriptProvider
         script = LLMScriptProvider(s.anthropic_api_key, s.llm_model, s.naturalness_pass)
+        logger.info("대본 LLM: Claude(%s)", s.llm_model)
+    elif s.gemini_api_key:
+        from .providers.llm import GeminiScriptProvider
+        script = GeminiScriptProvider(s.gemini_api_key, s.gemini_model, s.naturalness_pass)
+        logger.info("대본 LLM: Gemini 무료(%s)", s.gemini_model)
     else:
-        logger.warning("Anthropic 키 없음 → MockScript 폴백")
+        logger.warning("LLM 키 없음 → MockScript 폴백")
         script = mock.MockScript()
 
     # 에셋: 로컬 실소재(직접촬영/제조사) 우선 + Pexels 보조. 둘 다 없으면 mock.
