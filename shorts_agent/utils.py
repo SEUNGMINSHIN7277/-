@@ -188,3 +188,134 @@ def silent_audio(out: Path, duration: float) -> Path:
         desc="silent_audio",
     )
     return out
+
+
+# ======================================================================
+#  동적 비주얼 엔진 (모션 배경 + 켄번스 + 제품 카드 + 트랜지션)
+#  ※ 이 FFmpeg 정적 빌드는 drawtext 미지원 → 텍스트는 전부 libass.
+# ======================================================================
+
+# 모던한 그라데이션 컬러쌍 풀 (cut 별 로테이션)
+GRADIENT_PAIRS = [
+    ("0x141E30", "0x3A1C71"),  # 네이비→퍼플
+    ("0x0F2027", "0x2C5364"),  # 딥틸
+    ("0x42275a", "0x734b6d"),  # 플럼
+    ("0x1a2a6c", "0xb21f1f"),  # 블루→레드
+    ("0x000428", "0x004e92"),  # 미드나잇 블루
+    ("0x3E1E68", "0xD76D77"),  # 바이올렛→로즈
+    ("0x16222A", "0x3A6073"),  # 그래파이트
+]
+_TRANSITIONS = ["fade", "slideleft", "slideright", "smoothup", "wipeleft",
+                "circleopen", "fadeblack", "slideup"]
+
+
+def gradient_image(out: Path, c0: str, c1: str, label: str, font: Path,
+                   *, sub: str = "", size: tuple[int, int] = (1080, 1350),
+                   gtype: str = "radial") -> Path:
+    """그라데이션 배경 + 라벨을 한 장의 이미지로 (mock 제품/소스 컷 대용)."""
+    w, h = size
+    # 라벨이 없으면 깨끗한 그라데이션만 생성(실 b-roll 처럼)
+    if not label and not sub:
+        run_ffmpeg(["-f", "lavfi", "-i", f"gradients=s={w}x{h}:c0={c0}:c1={c1}:type={gtype}:rate=1",
+                    "-frames:v", "1", str(out)], desc="gradient_image")
+        return out
+    events = [f"Dialogue: 0,0:00:00.00,9:59:59.99,Lbl,,0,0,0,,"
+              f"{{\\an5\\pos({w // 2},{int(h * 0.46)})}}{_ass_escape(label)}"]
+    if sub:
+        events.append(f"Dialogue: 0,0:00:00.00,9:59:59.99,Sub,,0,0,0,,"
+                      f"{{\\an5\\pos({w // 2},{int(h * 0.56)})}}{_ass_escape(sub)}")
+    ass = out.with_suffix(".lbl.ass")
+    ass.write_text(_LABEL_ASS.format(w=w, h=h, font=_FONT_NAME, events="\n".join(events)),
+                   encoding="utf-8")
+    vf = (f"gradients=s={w}x{h}:c0={c0}:c1={c1}:type={gtype}:rate=1,"
+          f"ass={_ass_filter_path(ass)}:fontsdir={_ass_filter_path(font.parent)}")
+    run_ffmpeg(["-f", "lavfi", "-i", f"gradients=s={w}x{h}:c0={c0}:c1={c1}:type={gtype}:rate=1",
+                "-vf", f"ass={_ass_filter_path(ass)}:fontsdir={_ass_filter_path(font.parent)}",
+                "-frames:v", "1", str(out)], desc="gradient_image")
+    ass.unlink(missing_ok=True)
+    return out
+
+
+def gradient_motion_clip(out: Path, c0: str, c1: str, duration: float,
+                         *, gtype: str = "radial", speed: float = 0.012) -> Path:
+    """움직이는 그라데이션 배경 클립 (소스 없을 때의 고급 플레이스홀더)."""
+    run_ffmpeg(
+        ["-f", "lavfi",
+         "-i", (f"gradients=s={WIDTH}x{HEIGHT}:c0={c0}:c1={c1}:type={gtype}:"
+                f"speed={speed}:duration={duration:.3f}:rate={FPS}"),
+         "-t", f"{duration:.3f}", "-vf", "vignette,format=yuv420p", str(out)],
+        desc="gradient_motion_clip",
+    )
+    return out
+
+
+def ken_burns_clip(src_img: str, out: Path, duration: float, *, idx: int = 0) -> Path:
+    """이미지에 켄번스(서서히 줌인) + 비네팅 + 채도 보정."""
+    frames = max(2, int(duration * FPS))
+    sw, sh = int(WIDTH * 1.5), int(HEIGHT * 1.5)
+    zmax = 1.18 + (idx % 3) * 0.05
+    spd = 0.0012 + (idx % 2) * 0.0004
+    vf = (
+        f"scale={sw}:{sh}:force_original_aspect_ratio=increase,crop={sw}:{sh},"
+        f"zoompan=z='min(zoom+{spd},{zmax})':d={frames}:"
+        f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s={WIDTH}x{HEIGHT}:fps={FPS},"
+        f"vignette,eq=saturation=1.12,format=yuv420p"
+    )
+    run_ffmpeg(["-loop", "1", "-i", src_img, "-t", f"{duration:.3f}", "-vf", vf, str(out)],
+               desc="ken_burns_clip")
+    return out
+
+
+def product_card_clip(src_img: str, out: Path, duration: float) -> Path:
+    """제품 쇼케이스: 블러 배경 + 선명한 제품 + 느린 줌(전환 강조)."""
+    frames = max(2, int(duration * FPS))
+    fc = (
+        f"[0]scale={WIDTH}:{HEIGHT}:force_original_aspect_ratio=increase,crop={WIDTH}:{HEIGHT},"
+        f"gblur=sigma=42,eq=brightness=-0.12:saturation=1.1[bg];"
+        f"[0]scale={int(WIDTH * 0.74)}:-1[fg];"
+        f"[bg][fg]overlay=(W-w)/2:(H-h)/2,"
+        f"zoompan=z='min(zoom+0.0008,1.10)':d={frames}:"
+        f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s={WIDTH}x{HEIGHT}:fps={FPS},"
+        f"vignette,format=yuv420p"
+    )
+    run_ffmpeg(["-loop", "1", "-i", src_img, "-t", f"{duration:.3f}",
+                "-filter_complex", fc, str(out)], desc="product_card_clip")
+    return out
+
+
+def video_motion_clip(src: str, out: Path, duration: float) -> Path:
+    """실 영상 소스: 9:16 커버 크롭 + 비네팅/채도(무음)."""
+    vf = (f"scale={WIDTH}:{HEIGHT}:force_original_aspect_ratio=increase,crop={WIDTH}:{HEIGHT},"
+          f"setsar=1,fps={FPS},vignette,eq=saturation=1.1,format=yuv420p")
+    run_ffmpeg(["-stream_loop", "-1", "-i", src, "-t", f"{duration:.3f}",
+                "-an", "-vf", vf, str(out)], desc="video_motion_clip")
+    return out
+
+
+def xfade_concat(clips: list[Path], durations: list[float], out: Path,
+                 *, td: float = 0.35) -> Path:
+    """클립들을 xfade 트랜지션으로 연결(영상 전용). 길이=Σd - td*(n-1)."""
+    if len(clips) == 1:
+        run_ffmpeg(["-i", str(clips[0]), "-c", "copy", str(out)], desc="xfade_single")
+        return out
+    inputs: list[str] = []
+    for c in clips:
+        inputs += ["-i", str(c)]
+    steps: list[str] = []
+    prev = "0:v"
+    running = durations[0]
+    for i in range(1, len(clips)):
+        trans = _TRANSITIONS[(i - 1) % len(_TRANSITIONS)]
+        offset = max(0.0, running - td)
+        label = f"v{i}" if i < len(clips) - 1 else "vout"
+        steps.append(
+            f"[{prev}][{i}:v]xfade=transition={trans}:duration={td:.3f}:"
+            f"offset={offset:.3f}[{label}]"
+        )
+        prev = label
+        running = running + durations[i] - td
+    fc = ";".join(steps)
+    run_ffmpeg([*inputs, "-filter_complex", fc, "-map", "[vout]",
+                "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+                "-pix_fmt", "yuv420p", str(out)], desc="xfade_concat")
+    return out

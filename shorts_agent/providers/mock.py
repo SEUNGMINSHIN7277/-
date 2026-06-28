@@ -12,7 +12,7 @@ from pathlib import Path
 
 from ..config import Settings
 from ..models import FORMAT_TYPES, AssetBundle, ProductCandidate, Script, VideoJob
-from ..utils import make_solid_clip, silent_audio
+from ..utils import GRADIENT_PAIRS, gradient_image, silent_audio
 from .base import AssetProvider, ResearchProvider, ScriptProvider, UploadProvider, VoiceProvider
 
 logger = logging.getLogger("shorts_agent")
@@ -99,7 +99,10 @@ class MockScript(ScriptProvider):
 
 
 class MockAsset(AssetProvider):
-    """플레이스홀더 컬러 클립으로 에셋 번들 구성(실 FFmpeg 렌더로 실제 영상 생성)."""
+    """그라데이션 이미지로 에셋 번들 구성 → 렌더러의 켄번스/제품카드/트랜지션을 실제로 시연.
+
+    실모드에서는 PexelsAssetProvider(영상) + 상품 이미지로 대체됨.
+    """
 
     def __init__(self, settings: Settings):
         self.s = settings
@@ -108,19 +111,23 @@ class MockAsset(AssetProvider):
         workdir = Path(workdir)
         workdir.mkdir(parents=True, exist_ok=True)
         font = self.s.font_path
-        palette = ["0x1e293b", "0x7c2d12", "0x4c1d95", "0x0f766e", "0x9d174d", "0x334155"]
-        product_clip = make_solid_clip(
-            workdir / "prod.mp4", text=product.name[:18], color="0x111827",
-            duration=2.5, font=font, sub="[제품 컷 자리]",
+        # 제품 이미지(고유 컷 대용) — 따뜻한 톤 카드
+        product_img = gradient_image(
+            workdir / "prod.png", "0xFF9966", "0xFF5E62",
+            label=product.name[:16], font=font, sub=f"{product.price:,}원",
+            size=(1080, 1350), gtype="radial",
         )
+        # 보조 컷 — 컷별 비주얼 지시 라벨이 박힌 그라데이션 이미지
         b_roll = []
         for i, shot in enumerate(script.shot_directions[:6]):
-            c = make_solid_clip(
-                workdir / f"broll_{i}.mp4", text=shot[:20],
-                color=palette[i % len(palette)], duration=2.5, font=font,
+            c0, c1 = GRADIENT_PAIRS[i % len(GRADIENT_PAIRS)]
+            # 라벨 없이 깨끗한 그라데이션(실모드의 b-roll 영상 자리)
+            img = gradient_image(
+                workdir / f"broll_{i}.png", c0, c1, label="", font=font,
+                size=(1080, 1920), gtype="linear" if i % 2 else "radial",
             )
-            b_roll.append(str(c))
-        return AssetBundle(product_clips=[str(product_clip)], b_roll_clips=b_roll, music_path=None)
+            b_roll.append(str(img))
+        return AssetBundle(product_clips=[str(product_img)], b_roll_clips=b_roll, music_path=None)
 
 
 class MockVoice(VoiceProvider):
