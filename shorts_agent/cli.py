@@ -69,6 +69,26 @@ def cmd_run(args):
                   f"python -m shorts_agent gate-a <job_id>")
 
 
+def cmd_learn(args):
+    """경쟁 쇼츠 분석 → 승자 패턴(trends.json) 갱신."""
+    from .factory import build_trend_miner
+    s = Settings.load(dry_run=(True if getattr(args, "dry_run", False) else None))
+    miner = build_trend_miner(s)
+    seeds = [x.strip() for x in args.seeds.split(",") if x.strip()]
+    print(f"▶ 바이럴 학습 시작 (seeds={seeds})")
+    t = miner.mine(seeds)
+    print("\n=== 승자 패턴 요약 ===")
+    print("먹힌 후킹:", " / ".join(t.get("winning_hooks", [])[:5]) or "-")
+    print("유망 카테고리:", " / ".join(t.get("hot_categories", [])[:6]) or "-")
+    hp = t.get("hot_products", [])
+    if hp:
+        print("핫 제품:", " / ".join(
+            (p.get("name", "") if isinstance(p, dict) else str(p)) for p in hp[:5]))
+    print("앵글:", " / ".join(t.get("angles", [])[:5]) or "-")
+    print("메모:", t.get("notes", ""))
+    print(f"\n저장: {s.output_dir / 'trends.json'} → 다음 run 에 자동 반영됩니다.")
+
+
 def cmd_list(args):
     agent = _agent(args)
     jobs = agent.store.all_jobs()
@@ -126,6 +146,10 @@ def main(argv=None):
     r.add_argument("--count", type=int, default=5, help="제작 개수(daily_cap 이하)")
     r.add_argument("--auto", action="store_true", help="게이트 자동 통과(무인 운영)")
     r.set_defaults(func=cmd_run)
+
+    le = sub.add_parser("learn", help="경쟁 쇼츠 분석(바이럴 학습) → trends.json")
+    le.add_argument("--seeds", default="주방,청소,뷰티,수납정리,생활가전")
+    le.set_defaults(func=cmd_learn)
 
     l = sub.add_parser("list", help="잡 목록/상태"); l.set_defaults(func=cmd_list)
     sh = sub.add_parser("show", help="잡 상세"); sh.add_argument("job_id"); sh.set_defaults(func=cmd_show)

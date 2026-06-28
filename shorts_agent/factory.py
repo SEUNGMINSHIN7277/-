@@ -15,6 +15,17 @@ from .providers.render import FFmpegRenderProvider
 logger = logging.getLogger("shorts_agent")
 
 
+def build_trend_miner(s: Settings):
+    """바이럴 학습용 트렌드 마이너. 실모드+API키면 YouTube, 아니면 Mock."""
+    from .providers import trends
+    if not s.dry_run and s.youtube_api_key:
+        logger.info("트렌드: YouTube Data API 실연동")
+        return trends.YouTubeTrendMiner(s, s.youtube_api_key)
+    if not s.dry_run:
+        logger.warning("YOUTUBE_API_KEY 없음 → MockTrendMiner")
+    return trends.MockTrendMiner(s)
+
+
 def _build_voice(s: Settings):
     """TTS_PROVIDER 우선, 없으면 사용 가능한 키로 자동 선택."""
     p = (s.tts_provider or "").lower()
@@ -79,7 +90,7 @@ def build_providers(s: Settings) -> Providers:
 
     if s.anthropic_api_key:
         from .providers.llm import LLMScriptProvider
-        script = LLMScriptProvider(s.anthropic_api_key, s.llm_model)
+        script = LLMScriptProvider(s.anthropic_api_key, s.llm_model, s.naturalness_pass)
     else:
         logger.warning("Anthropic 키 없음 → MockScript 폴백")
         script = mock.MockScript()

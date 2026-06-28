@@ -101,6 +101,25 @@ research(쿠팡) → script(LLM, 포맷로테이션+유사도) → [GATE A]
 - **배경음악**: `assets/music/` 에 라이선스 안전 음원을 넣으면 영상별 자동 선택 + 나레이션 아래로 덕킹.
   ⚠️ 음원은 직접 확보해야 합니다(저작권). dry-run 에는 음악 없음.
 
+### 바이럴 자기학습 루프 (`learn`)
+같은 니치의 **잘 터진 경쟁 쇼츠**를 분석해 다음 영상에 반영합니다.
+```bash
+python -m shorts_agent learn --seeds "주방,청소,뷰티"   # → output/trends.json
+python -m shorts_agent run   --seeds "주방,청소,뷰티" --count 5   # trends 자동 반영
+```
+- YouTube Data API(`YOUTUBE_API_KEY`, OAuth 불필요)로 최근 N일 쇼츠를 **조회속도/참여율**로 랭킹 →
+  제목·태그·제품을 LLM 이 분석해 `winning_hooks / hot_products / hot_categories / angles` 추출.
+- `run` 이 이를 **상품 시드 보강 + 대본 후킹/앵글 힌트**로 사용(복붙 아님, 구조만 흡수).
+- ⚠️ 한계: 남의 영상의 **실제 수익·시청지속률은 비공개**라 조회수×참여도로 *추정*. 화면(편집) 자동분석은 미포함.
+
+### 사람이 만든 티 — 자연스러움 루프 + 스타일 학습
+- **자연스러움 자기검열**(`NATURALNESS_PASS=true`): 대본 생성 후 LLM 이 'AI 티(만연체·광고체·번역투)'를
+  스스로 잡아 **사람 구어체로 재작성**.
+- **스타일 학습**: `assets/style_profile.json`(예시: `style_profile.example.json`)에 채널 말투/레퍼런스
+  톤을 적어두면 생성·재작성에 조건으로 주입 → 점점 당신 취향에 수렴.
+- ❗ 진짜 '사람이 만든 티'의 결정적 요소는 **실제 촬영 화면**입니다(아래 한계 참고). 자연스러움 루프는
+  대본·말투를, 실소재(`assets/products/`)는 화면을 담당합니다 — 둘 다 있어야 완성.
+
 ### 고도화 기능
 - **특색 상품 LLM 큐레이션**: Anthropic 키가 있으면 후보 풀을 '신박/화제성/전환' 기준으로
   LLM 이 재선별(`curation.py`). 없으면 휴리스틱(신박 키워드·저관여 가산)으로 동작.

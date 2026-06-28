@@ -67,6 +67,12 @@ class Settings:
 
     pexels_api_key: str = ""
 
+    # 바이럴 학습 / 자연스러움
+    youtube_api_key: str = ""              # 트렌드 수집(search.list)용 API 키(OAuth 불필요)
+    naturalness_pass: bool = True          # 대본 AI티 제거 자기검열 패스
+    trend_lookback_days: int = 60          # 최근 N일 쇼츠만 분석
+    style_profile_path: Path = field(default_factory=lambda: ROOT / "assets" / "style_profile.json")
+
     youtube_client_secret_file: str = ""   # OAuth client secret json
     youtube_token_file: str = ""           # 업로드 토큰 json
     youtube_analytics_token_file: str = "" # Analytics 읽기 토큰 json(피드백 루프)
@@ -109,6 +115,10 @@ class Settings:
             typecast_api_key=os.environ.get("TYPECAST_API_KEY", ""),
             typecast_actor_id=os.environ.get("TYPECAST_ACTOR_ID", ""),
             pexels_api_key=os.environ.get("PEXELS_API_KEY", ""),
+            youtube_api_key=os.environ.get("YOUTUBE_API_KEY", ""),
+            trend_lookback_days=int(os.environ.get("TREND_LOOKBACK_DAYS", "60")),
+            style_profile_path=Path(os.environ.get(
+                "STYLE_PROFILE_PATH", str(ROOT / "assets" / "style_profile.json"))),
             youtube_client_secret_file=os.environ.get("YOUTUBE_CLIENT_SECRET_FILE", ""),
             youtube_token_file=os.environ.get("YOUTUBE_TOKEN_FILE", ""),
             youtube_analytics_token_file=os.environ.get("YOUTUBE_ANALYTICS_TOKEN_FILE", ""),
@@ -120,6 +130,7 @@ class Settings:
             dry_run = b("DRY_RUN", not (s.anthropic_api_key and s.coupang_access_key))
         s.dry_run = dry_run
         s.auto = auto if auto is not None else b("AUTO", False)
+        s.naturalness_pass = b("NATURALNESS_PASS", True)
 
         s.output_dir.mkdir(parents=True, exist_ok=True)
         return s

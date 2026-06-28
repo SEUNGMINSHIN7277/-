@@ -21,8 +21,18 @@ class ScriptProvider(ABC):
         format_type: str,
         target_audience: str,
         disclosure_text: str,
+        trend_hints: dict | None = None,
+        style_profile: dict | None = None,
     ) -> Script:
-        """recent_hooks: 직전 인트로들 — 유사도 검사로 양산 방지."""
+        """recent_hooks: 직전 인트로들 — 유사도 검사로 양산 방지.
+        trend_hints: 바이럴 학습 결과(승자 후킹/앵글 등).
+        style_profile: 사람 말투/레퍼런스 스타일 가이드(자연스러움 조건)."""
+
+
+class TrendMiner(ABC):
+    @abstractmethod
+    def mine(self, seeds: list[str]) -> dict:
+        """경쟁 쇼츠 분석 → 승자 패턴(dict) 반환 및 저장."""
 
 
 class AssetProvider(ABC):

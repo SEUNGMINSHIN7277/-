@@ -47,12 +47,23 @@ class ShortsAgent:
         self.p = providers
         self.store = store
         self._weights: dict = {"format_weights": {}, "category_weights": {}}
+        self._trends: dict = {}
+        self._style: dict = _load_json(settings.style_profile_path)
 
     # ---------------- 배치 ----------------
     def run_batch(self, seeds: list[str], count: int) -> list[VideoJob]:
         count = min(count, self.s.daily_cap)
         recent_ids = [j.youtube_id for j in self.store.all_jobs() if j.youtube_id]
         self._weights = self.p.feedback.collect(recent_ids) or self._weights
+
+        # 바이럴 학습 결과 로드 → 유망 카테고리를 시드에 보강
+        from .providers.trends import load_trends
+        self._trends = load_trends(self.s)
+        if self._trends.get("hot_categories"):
+            extra = [c for c in self._trends["hot_categories"] if c and c not in seeds]
+            if extra:
+                seeds = seeds + extra[:3]
+                logger.info("트렌드 유망 카테고리 시드 보강: %s", extra[:3])
         cat_w = self._weights.get("category_weights", {})
         fmt_w = self._weights.get("format_weights", {})
         if cat_w or fmt_w:
@@ -108,7 +119,8 @@ class ShortsAgent:
             try:
                 script = with_retry(
                     lambda f=fmt: self.p.script.write(
-                        product, recent, f, self.s.target_audience, self.s.disclosure_text
+                        product, recent, f, self.s.target_audience, self.s.disclosure_text,
+                        trend_hints=self._trends, style_profile=self._style,
                     ),
                     stage=Stage.SCRIPTED,
                 )
@@ -239,3 +251,14 @@ class ShortsAgent:
 
 def _new_id() -> str:
     return uuid.uuid4().hex[:10]
+
+
+def _load_json(path) -> dict:
+    import json
+    p = Path(path)
+    if not p.exists():
+        return {}
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return {}

@@ -62,9 +62,15 @@ class MockResearch(ResearchProvider):
 
 
 class MockScript(ScriptProvider):
-    def write(self, product, recent_hooks, format_type, target_audience, disclosure_text) -> Script:
+    def write(self, product, recent_hooks, format_type, target_audience, disclosure_text,
+              trend_hints=None, style_profile=None) -> Script:
         n = product.name
         hook = _HOOK_TMPL.get(format_type, "{n} 솔직 후기").format(n=n)
+        # 바이럴 학습 힌트가 있으면 후킹에 살짝 반영(시연용)
+        if trend_hints and trend_hints.get("winning_hooks"):
+            import re as _re
+            idx = len(_re.findall(r"\w", n)) % len(trend_hints["winning_hooks"])
+            hook = f"{n}… {trend_hints['winning_hooks'][idx]}"[:24]
         variants = [tmpl.format(n=n) for tmpl in _HOOK_TMPL.values()]
         body = (
             f"{hook} "
