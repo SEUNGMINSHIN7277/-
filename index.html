@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>다시(Dasi) — 딴짓은 막지 않고, 공부로 다시 돌아오게 합니다</title>
-<meta name="description" content="다시(Dasi)는 딴짓을 차단하지 않습니다. 이탈 후 '복귀의 마찰'만 낮춰, 떠난 자리로 따뜻하게 이어하게 합니다." />
-<meta property="og:title" content="다시(Dasi)" />
-<meta property="og:description" content="딴짓은 막지 않고, 공부로 다시 돌아오게 합니다." />
+<title>다시(Dasi) — 우리는 해결책을 버리고, 문제로 내려갔습니다</title>
+<meta name="description" content="모두가 '집중력'을 말할 때, 우리는 한 겹씩 더 파고들었습니다. 학생이 원하는 것에서 시작해 근본원인에 닿을 때까지 — 빈틈없이 추적한 문제정의의 기록." />
+<meta property="og:title" content="다시(Dasi) — 문제정의의 기록" />
+<meta property="og:description" content="우리는 해결책을 버리고, 근본원인까지 집요하게 내려갔습니다." />
 <meta property="og:type" content="website" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>↩️</text></svg>" />
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -15,7 +15,7 @@
     --bg:#0d0c0f; --bg2:#141217; --card:#1a1820; --line:#2a2730;
     --ink:#f4f1ec; --mut:#a39e98; --mut2:#736e68;
     --amber:#f5a623; --amber2:#ffcaa3; --warm:#ff7a45;
-    --radius:18px; --max:1080px;
+    --radius:18px; --max:920px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -28,9 +28,7 @@
   .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
   .accent{color:var(--amber)}
   .warm{color:var(--warm)}
-  section{position:relative}
 
-  /* nav */
   nav{position:sticky;top:0;z-index:50;background:rgba(13,12,15,.72);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
   nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
   .logo{font-weight:800;font-size:20px;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
@@ -40,95 +38,106 @@
   @media(max-width:640px){.navlinks{display:none}}
 
   /* hero */
-  .hero{padding:96px 0 84px;text-align:center;position:relative;overflow:hidden}
-  .hero::before{content:"";position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:760px;height:760px;max-width:140vw;
-    background:radial-gradient(circle, rgba(245,166,35,.16), rgba(255,122,69,.06) 40%, transparent 68%);filter:blur(8px);pointer-events:none}
+  .hero{padding:96px 0 70px;text-align:center;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:720px;height:720px;max-width:140vw;
+    background:radial-gradient(circle, rgba(245,166,35,.15), rgba(255,122,69,.05) 42%, transparent 68%);filter:blur(8px);pointer-events:none}
   .badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--amber2);border:1px solid var(--line);
     background:var(--card);padding:7px 15px;border-radius:999px;margin-bottom:30px}
   .badge .pulse{width:7px;height:7px;border-radius:50%;background:var(--warm);animation:pulse 2s infinite}
   @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(255,122,69,.5)}50%{opacity:.7;box-shadow:0 0 0 7px rgba(255,122,69,0)}}
-  h1{font-size:clamp(34px,6.2vw,62px);line-height:1.15;letter-spacing:-.035em;font-weight:800}
+  h1{font-size:clamp(33px,6vw,58px);line-height:1.16;letter-spacing:-.035em;font-weight:800}
   h1 .grad{background:linear-gradient(100deg,var(--amber),var(--warm));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .sub{margin:26px auto 0;max-width:620px;font-size:clamp(16px,2.2vw,19px);color:var(--mut)}
-  .cta{margin-top:40px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .sub{margin:26px auto 0;max-width:600px;font-size:clamp(16px,2.2vw,18.5px);color:var(--mut)}
+  .cta{margin-top:38px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
   .btn{padding:14px 26px;border-radius:12px;font-weight:700;font-size:15px;transition:.18s;border:1px solid transparent}
   .btn-pri{background:linear-gradient(100deg,var(--amber),var(--warm));color:#1a1208}
   .btn-pri:hover{transform:translateY(-2px);box-shadow:0 12px 30px -8px rgba(255,122,69,.5)}
-  .btn-sec{border-color:var(--line);color:var(--ink);background:var(--card)}
-  .btn-sec:hover{border-color:var(--mut2)}
+  .scrollhint{margin-top:40px;color:var(--mut2);font-size:13px;letter-spacing:.04em}
+  .scrollhint .ar{display:block;margin-top:6px;animation:bob 1.8s infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
-  /* scene strip */
-  .scene{margin-top:64px;max-width:760px;margin-left:auto;margin-right:auto;
-    background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:var(--radius);
-    padding:26px;text-align:left;box-shadow:0 30px 80px -40px rgba(0,0,0,.8)}
-  .scene .row{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-bottom:1px dashed var(--line)}
-  .scene .row:last-child{border-bottom:0}
-  .scene .ico{flex:0 0 34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:17px;background:#221f29}
-  .scene .t{font-weight:700;font-size:15px}
-  .scene .d{font-size:14px;color:var(--mut);margin-top:2px}
-  .scene .save{color:var(--amber)}
+  /* section heads */
+  .sec{padding:36px 0}
+  .eyebrow{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut2);text-align:center}
+  .sectitle{font-size:clamp(24px,4vw,36px);letter-spacing:-.03em;line-height:1.22;margin-top:12px;font-weight:800;text-align:center}
+  .secsub{margin:16px auto 0;font-size:16px;color:var(--mut);max-width:620px;text-align:center}
 
-  /* generic section */
-  .sec{padding:90px 0;border-top:1px solid var(--line)}
-  .eyebrow{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut2)}
-  h2{font-size:clamp(26px,4vw,40px);letter-spacing:-.03em;line-height:1.2;margin-top:12px;font-weight:800}
-  .lead{margin-top:18px;font-size:17px;color:var(--mut);max-width:680px}
+  /* DESCENT */
+  .descent{position:relative;margin-top:54px}
+  .descent::before{content:"";position:absolute;left:25px;top:14px;bottom:14px;width:2px;
+    background:linear-gradient(var(--line) 0%, var(--amber) 92%);opacity:.7}
+  @media(max-width:560px){.descent::before{left:19px}}
+  .step{display:grid;grid-template-columns:52px 1fr;gap:20px;align-items:start;position:relative}
+  @media(max-width:560px){.step{grid-template-columns:40px 1fr;gap:14px}}
+  .node{width:36px;height:36px;margin:6px auto 0;border-radius:50%;display:grid;place-items:center;
+    background:var(--card);border:1px solid var(--line);font-weight:800;font-size:15px;color:var(--mut);
+    position:relative;z-index:2;flex:none}
+  @media(max-width:560px){.node{width:30px;height:30px;font-size:13px}}
+  .stepcard{border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;background:var(--card);
+    transition:.2s;box-shadow:0 10px 30px -24px rgba(0,0,0,.8)}
+  .stepcard:hover{border-color:var(--mut2)}
+  .depth{font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--mut2);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .depth .bar{height:5px;border-radius:3px;background:#221f29;flex:1;max-width:120px;overflow:hidden}
+  .depth .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--amber),var(--warm))}
+  .stepcard h3{font-size:clamp(18px,2.6vw,22px);letter-spacing:-.02em;line-height:1.3}
+  .stepcard p{color:var(--mut);font-size:15px;margin-top:9px}
+  .stepcard .tip{color:var(--amber2)}
+  .why{display:flex;align-items:center;gap:10px;padding:11px 0 11px 18px;color:var(--mut2);font-size:14px;font-weight:600}
+  @media(max-width:560px){.why{padding-left:9px}}
+  .why .chev{width:18px;height:18px;flex:none;color:var(--warm)}
+  .why em{font-style:normal;color:var(--warm)}
 
-  /* asymmetry */
-  .asym{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:48px}
-  @media(max-width:720px){.asym{grid-template-columns:1fr}}
-  .asym .col{border:1px solid var(--line);border-radius:var(--radius);padding:28px;background:var(--card)}
-  .asym .col.exit{background:linear-gradient(180deg,rgba(255,122,69,.05),var(--card))}
-  .asym .tag{font-size:13px;font-weight:700;letter-spacing:.04em}
-  .asym .big{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:10px 0 6px}
+  /* root step emphasis */
+  .step.root .node{background:linear-gradient(135deg,var(--amber),var(--warm));border-color:transparent;color:#1a1208;
+    box-shadow:0 0 0 6px rgba(245,166,35,.12),0 0 24px rgba(255,122,69,.5)}
+  .step.root .stepcard{border-color:rgba(245,166,35,.55);background:linear-gradient(180deg,rgba(245,166,35,.08),var(--card))}
+  .step.root .depth{color:var(--amber)}
+  .step.turn .node{border-color:var(--warm);color:var(--warm)}
+
+  /* conclusion */
+  .conc{margin-top:44px;border:1px solid rgba(245,166,35,.4);border-radius:22px;
+    background:linear-gradient(180deg,rgba(255,122,69,.07),var(--bg2));padding:40px 30px;text-align:center}
+  .conc .k{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--amber)}
+  .conc h2{font-size:clamp(22px,3.6vw,32px);letter-spacing:-.03em;line-height:1.34;margin-top:14px;font-weight:800}
+  .conc h2 .grad{background:linear-gradient(100deg,var(--amber),var(--warm));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .conc p{margin-top:16px;color:var(--mut);font-size:16px;max-width:560px;margin-left:auto;margin-right:auto}
+
+  /* asymmetry (why the gap is fatal) */
+  .asym{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px}
+  @media(max-width:600px){.asym{grid-template-columns:1fr}}
+  .asym .col{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--card);text-align:left}
+  .asym .tag{font-size:12.5px;font-weight:700;letter-spacing:.04em}
+  .asym .big{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:8px 0 5px}
   .asym .col.exit .big{color:#7ee0a8}
   .asym .col.ret .big{color:var(--warm)}
-  .asym p{color:var(--mut);font-size:15px}
-  .asym .meter{height:8px;border-radius:6px;background:#221f29;margin-top:18px;overflow:hidden}
+  .asym p{color:var(--mut);font-size:14px}
+  .asym .meter{height:7px;border-radius:6px;background:#221f29;margin-top:14px;overflow:hidden}
   .asym .meter i{display:block;height:100%}
   .col.exit .meter i{width:8%;background:#7ee0a8}
   .col.ret .meter i{width:88%;background:linear-gradient(90deg,var(--amber),var(--warm))}
-  .asym .mlabel{font-size:12px;color:var(--mut2);margin-top:8px}
-
-  /* principles cards */
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:48px}
-  @media(max-width:860px){.grid3{grid-template-columns:1fr}}
-  .card{border:1px solid var(--line);border-radius:var(--radius);padding:26px;background:var(--card);transition:.2s}
-  .card:hover{border-color:var(--mut2);transform:translateY(-3px)}
-  .card .n{font-size:13px;color:var(--amber);font-weight:700}
-  .card h3{font-size:18px;margin:10px 0 8px;letter-spacing:-.01em}
-  .card p{color:var(--mut);font-size:14.5px}
-
-  /* compare */
-  .table{margin-top:44px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-  .table .tr{display:grid;grid-template-columns:1.2fr 1fr 1.4fr;gap:0}
-  .table .tr>div{padding:16px 18px;border-bottom:1px solid var(--line);font-size:14.5px}
-  .table .tr.head>div{background:var(--bg2);font-weight:700;color:var(--mut);font-size:13px;letter-spacing:.03em}
-  .table .tr:last-child>div{border-bottom:0}
-  .table .tr>div:nth-child(2){color:var(--mut)}
-  .table .us{color:var(--amber2)!important;font-weight:600}
-  .table .tr.usrow>div{background:linear-gradient(90deg,rgba(245,166,35,.07),transparent)}
-  @media(max-width:720px){.table .tr{grid-template-columns:1fr}.table .tr>div{border-bottom:1px solid var(--line)}.table .tr.head{display:none}}
+  .asym .ml{font-size:11.5px;color:var(--mut2);margin-top:7px}
 
   /* quote */
-  .quote{padding:90px 0;text-align:center;border-top:1px solid var(--line);background:linear-gradient(180deg,var(--bg),var(--bg2))}
-  .quote blockquote{font-size:clamp(22px,3.6vw,34px);font-weight:800;letter-spacing:-.025em;line-height:1.35;max-width:760px;margin:0 auto}
-  .quote cite{display:block;margin-top:22px;font-style:normal;color:var(--mut);font-size:15px}
+  .quote{padding:74px 0;text-align:center;margin-top:30px;border-top:1px solid var(--line);background:linear-gradient(180deg,var(--bg),var(--bg2))}
+  .quote blockquote{font-size:clamp(21px,3.4vw,32px);font-weight:800;letter-spacing:-.025em;line-height:1.36;max-width:720px;margin:0 auto}
+  .quote .grad{background:linear-gradient(100deg,var(--amber),var(--warm));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .quote cite{display:block;margin-top:20px;font-style:normal;color:var(--mut);font-size:15px}
 
   /* team */
-  .team{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:44px}
-  @media(max-width:720px){.team{grid-template-columns:1fr}}
-  .person{border:1px solid var(--line);border-radius:var(--radius);padding:26px;background:var(--card)}
+  .team{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px}
+  @media(max-width:600px){.team{grid-template-columns:1fr}}
+  .person{border:1px solid var(--line);border-radius:var(--radius);padding:24px;background:var(--card)}
   .person .role{font-size:13px;color:var(--amber);font-weight:700}
-  .person .name{font-size:19px;font-weight:800;margin:6px 0 10px}
-  .person p{color:var(--mut);font-size:14.5px}
+  .person .name{font-size:18px;font-weight:800;margin:6px 0 9px}
+  .person p{color:var(--mut);font-size:14px}
+  .stage{display:flex;justify-content:center;margin-top:30px}
+  .stage span{display:inline-flex;align-items:center;gap:9px;font-size:14px;color:var(--mut);border:1px solid var(--line);background:var(--card);padding:9px 16px;border-radius:999px}
 
-  /* status / footer */
-  .stage{display:inline-flex;align-items:center;gap:9px;font-size:14px;color:var(--mut);border:1px solid var(--line);background:var(--card);padding:9px 16px;border-radius:999px;margin-top:30px}
-  footer{border-top:1px solid var(--line);padding:54px 0 70px;text-align:center;color:var(--mut2);font-size:14px}
+  footer{border-top:1px solid var(--line);padding:50px 0 66px;text-align:center;color:var(--mut2);font-size:14px;margin-top:60px}
   footer .logo{justify-content:center;margin-bottom:16px;color:var(--ink)}
   footer a.mail{color:var(--amber2)}
-  .reveal{opacity:0;transform:translateY(18px);transition:.7s cubic-bezier(.2,.7,.2,1)}
+
+  .reveal{opacity:0;transform:translateY(16px);transition:.6s cubic-bezier(.2,.7,.2,1)}
   .reveal.in{opacity:1;transform:none}
 </style>
 </head>
@@ -138,9 +147,8 @@
   <div class="wrap">
     <div class="logo"><span class="dot"></span>다시 <span style="font-weight:500;color:var(--mut);font-size:14px">Dasi</span></div>
     <div class="navlinks">
-      <a href="#problem">문제</a>
-      <a href="#how">작동 방식</a>
-      <a href="#diff">차별점</a>
+      <a href="#journey">추적 과정</a>
+      <a href="#root">근본원인</a>
       <a href="#team">팀</a>
     </div>
   </div>
@@ -149,137 +157,166 @@
 <!-- HERO -->
 <header class="hero">
   <div class="wrap">
-    <div class="badge"><span class="pulse"></span>프라이머 클럽 29기 · 아이디어 단계</div>
-    <h1>딴짓은 막지 않습니다.<br><span class="grad">공부로 다시</span> 돌아오게 합니다.</h1>
-    <p class="sub">세상의 모든 앱이 '이탈을 차단'할 때, 다시(Dasi)는 반대편을 봅니다.<br>떠난 건 그대로 두고, <b style="color:var(--ink)">돌아오는 길의 마찰만</b> 0에 가깝게 만듭니다.</p>
+    <div class="badge"><span class="pulse"></span>프라이머 클럽 29기 · 문제정의의 기록</div>
+    <h1>우리는 해결책을 버리고,<br><span class="grad">문제로</span> 내려갔습니다.</h1>
+    <p class="sub">모두가 '집중력'을 말할 때, 우리는 한 겹씩 더 파고들었습니다.<br>학생이 진짜 원하는 것에서 시작해, <b style="color:var(--ink)">근본원인에 닿을 때까지</b> — 빈틈없이.</p>
     <div class="cta">
-      <a class="btn btn-pri" href="#how">어떻게 돌아오게 하나요 ↓</a>
-      <a class="btn btn-sec" href="#problem">우리가 푼 진짜 문제</a>
+      <a class="btn btn-pri" href="#journey">근본원인까지 따라 내려가기</a>
     </div>
-
-    <div class="scene reveal">
-      <div class="row">
-        <div class="ico">📖</div>
-        <div><div class="t">공부하다 폰을 듭니다.</div><div class="d">우리는 막지 않습니다. 휴식은 인간의 본성이니까요.</div></div>
-      </div>
-      <div class="row">
-        <div class="ico">🔖</div>
-        <div><div class="t">떠나는 순간, <span class="save">'다음 한 줄'이 조용히 저장됩니다.</span></div><div class="d">"3번 문제 — 답까지 두 줄 남음" · 차가운 재시작 대신 따뜻한 이어하기.</div></div>
-      </div>
-      <div class="row">
-        <div class="ico">↩️</div>
-        <div><div class="t">돌아올 때, 그 한 줄을 건넵니다.</div><div class="d">잠금화면이 아니라 "두 줄만 더 쓰면 3번 끝나요." 돌아가는 길이 공짜가 됩니다.</div></div>
-      </div>
-    </div>
+    <div class="scrollhint">일곱 번 다시 물었습니다<span class="ar">↓</span></div>
   </div>
 </header>
 
-<!-- PROBLEM -->
-<section class="sec" id="problem">
-  <div class="wrap reveal">
-    <div class="eyebrow">우리가 틀린 곳에서 출발했다</div>
-    <h2>문제는 '집중력'이 아니라<br><span class="accent">구조의 비대칭</span>이었습니다.</h2>
-    <p class="lead">처음엔 '사람들이 집중을 못 한다'고 봤습니다. 그래서 화상 매칭(FocusTime)을 만들었죠. 하지만 고등학생 20명에게 '마지막으로 딴짓 샌 순간'을 캐물으며, 문제정의가 틀렸음을 알았습니다. 다수는 집중을 못 한 게 아니라 — <b style="color:var(--ink)">잠깐 이탈한 뒤 '돌아오지' 못했습니다.</b></p>
+<!-- DESCENT -->
+<section class="sec" id="journey" style="padding-top:60px">
+  <div class="wrap">
+    <div class="eyebrow reveal">근본원인 추적 · Root-cause descent</div>
+    <h2 class="sectitle reveal">"왜?"를 멈추지 않았습니다.</h2>
+    <p class="secsub reveal">표면의 증상에서 출발해, 답이 나올 때마다 다시 "왜?"를 던졌습니다. 전제가 틀렸다는 걸 인정하며 한 층씩 내려간 기록입니다.</p>
 
+    <div class="descent">
+
+      <!-- 1 -->
+      <div class="step reveal">
+        <div class="node">1</div>
+        <div class="stepcard">
+          <div class="depth">표면 · 모두가 원하는 것 <span class="bar"><i style="width:14%"></i></span></div>
+          <h3>"학생은 사실, 몰입하고 싶어 한다."</h3>
+          <p>공부를 망치고 싶은 학생은 없습니다. 누구나 깊게 집중한 그 상태를 원합니다. 그런데 왜 그게 안 될까요?</p>
+        </div>
+      </div>
+      <div class="why reveal"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg><span>그런데 왜 <em>안 될까?</em></span></div>
+
+      <!-- 2 -->
+      <div class="step reveal">
+        <div class="node">2</div>
+        <div class="stepcard">
+          <div class="depth">한 겹 아래 · 시대의 방해물 <span class="bar"><i style="width:30%"></i></span></div>
+          <h3>"버텨낼 재간이 없다."</h3>
+          <p>지금 시대엔 숏폼·알림·무한 피드 — <b style="color:var(--ink)">설계된 중독</b>이 손안에 있습니다. 아직 자기통제가 미성숙한 학생들은 이걸 의지만으로 버텨낼 재간이 없습니다.</p>
+        </div>
+      </div>
+      <div class="why reveal"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg><span>그래서 학생들은 <em>어떻게 할까?</em></span></div>
+
+      <!-- 3 -->
+      <div class="step reveal">
+        <div class="node">3</div>
+        <div class="stepcard">
+          <div class="depth">시장의 신호 · 학생들의 자구책 <span class="bar"><i style="width:46%"></i></span></div>
+          <h3>"감시자에게 돈을 낸다."</h3>
+          <p>그래서 학생들은 <b style="color:var(--ink)">관리형 독서실</b>을 찾습니다. 엄격한 규율과 '감시자'에게 돈을 지불하면서까지 자기 통제를 외주로 맡깁니다. <span class="tip">— 통제에 대한 '지불 의향'은 이미 시장에서 증명돼 있었습니다.</span></p>
+        </div>
+      </div>
+      <div class="why reveal"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg><span>여기서 우리의 <em>첫 가설</em>이 나왔다</span></div>
+
+      <!-- 4 -->
+      <div class="step turn reveal">
+        <div class="node">4</div>
+        <div class="stepcard">
+          <div class="depth" style="color:var(--warm)">첫 해결 가설 · FocusTime <span class="bar"><i style="width:55%"></i></span></div>
+          <h3>"더 싸게, 같은 효과를."</h3>
+          <p>그 관리형 독서실의 효과를 더 싸게 낼 순 없을까? <b style="color:var(--ink)">호손 효과</b>(누군가 지켜보면 더 잘한다)를 빌려, 화상으로 서로 모르는 무작위의 동성·같은 학년을 매칭. 서로가 서로를 관리·감독하며 집중력을 끌어올리는 <b style="color:var(--ink)">FocusTime</b>을 구상했습니다.</p>
+        </div>
+      </div>
+      <div class="why reveal"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg><span>하지만 우리는 <em>현장으로 갔다</em></span></div>
+
+      <!-- 5 -->
+      <div class="step turn reveal">
+        <div class="node">5</div>
+        <div class="stepcard">
+          <div class="depth" style="color:var(--warm)">전제가 흔들리다 · 현장 인터뷰 <span class="bar"><i style="width:70%"></i></span></div>
+          <h3>"정말 집중을 '못' 하는 걸까?"</h3>
+          <p>책상을 떠나 학생들에게 직접 물으며 근본원인을 집요하게 추적하자, 우리의 전제가 무너졌습니다. 학생들은 3분이든 5분이든 <b style="color:var(--ink)">분명히 집중했습니다.</b> 문제는 '집중력'이 아니었습니다.</p>
+        </div>
+      </div>
+      <div class="why reveal"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg><span>그럼 진짜 원인은 <em>어디에?</em></span></div>
+
+      <!-- 6 -->
+      <div class="step reveal">
+        <div class="node">6</div>
+        <div class="stepcard">
+          <div class="depth">한 겹 더 · 인간의 본성 <span class="bar"><i style="width:84%"></i></span></div>
+          <h3>"휴식은 고칠 결함이 아니라, 본성이다."</h3>
+          <p>끊임없는 집중은 불가능합니다. 인간은 반드시 쉬러 갑니다. 그러니 '휴식을 막는' 모든 해결책 — 감시·차단 — 은 <b style="color:var(--ink)">본성과 싸우는 일</b>이었습니다. 우리의 FocusTime도 그 줄에 서 있었습니다.</p>
+        </div>
+      </div>
+      <div class="why reveal"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg><span>그렇다면 진짜 <em>빈자리는?</em></span></div>
+
+      <!-- 7 ROOT -->
+      <div class="step root reveal">
+        <div class="node">7</div>
+        <div class="stepcard">
+          <div class="depth">근본원인 · ROOT CAUSE <span class="bar"><i style="width:100%"></i></span></div>
+          <h3>"휴식에서 돌아오는 다리가, 어디에도 없다."</h3>
+          <p>휴식은 좋습니다. 문제는 휴식에서 다시 집중으로 <b style="color:var(--ink)">'돌아오는 간극'을 메워주는 장치가 어디에도 없다</b>는 것. 바로 그 간극에서 학생들은 중독적인 플랫폼·활동에 빨려 들어가 헤어나오지 못합니다. 이것이 몰입을 무너뜨리는 가장 큰, 그리고 <span class="tip">아무도 손대지 않은</span> 원인이었습니다.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONCLUSION + WHY THE GAP IS FATAL -->
+<section class="sec" id="root">
+  <div class="wrap">
+    <div class="conc reveal">
+      <div class="k">집요하게 내려온 끝에 — 확정된 문제정의</div>
+      <h2>진짜 문제는 '집중력 부족'이 아니라,<br><span class="grad">이탈 후 복귀의 간극</span>이 비어 있다는 것입니다.</h2>
+      <p>그래서 우리는 딴짓을 막지 않기로 했습니다. 모두가 싸우는 '이탈'이 아니라, 아무도 보지 않은 <b style="color:var(--ink)">그 빈 다리</b>를 봅니다.</p>
+    </div>
+
+    <p class="secsub reveal" style="margin-top:46px">왜 그 간극이 치명적일까요? — 떠나기와 돌아오기의 비용이 완전히 다르기 때문입니다.</p>
     <div class="asym">
-      <div class="col exit">
+      <div class="col exit reveal">
         <div class="tag" style="color:#7ee0a8">이탈</div>
         <div class="big">마찰 0</div>
-        <p>손가락 한 번. 즉각적인 보상(숏폼). 떠나는 데는 아무런 비용이 들지 않습니다.</p>
+        <p>손가락 한 번. 즉각적인 보상(숏폼). 떠나는 데는 아무 비용이 들지 않습니다.</p>
         <div class="meter"><i></i></div>
-        <div class="mlabel">떠나기는 너무 쉽다</div>
+        <div class="ml">떠나기는 너무 쉽다</div>
       </div>
-      <div class="col ret">
+      <div class="col ret reveal">
         <div class="tag warm">복귀</div>
         <div class="big">마찰 大</div>
         <p>"어디까지 했더라" 작업기억 재로딩 + 도파민 낙차 + 하기 싫은 과제 재대면. 그래서 5분이 50분이 됩니다.</p>
         <div class="meter"><i></i></div>
-        <div class="mlabel">돌아오기는 너무 비싸다</div>
+        <div class="ml">돌아오기는 너무 비싸다</div>
       </div>
     </div>
-    <p class="lead" style="margin-top:32px">업계 전체가 <b style="color:var(--ink)">'이탈에 마찰 더하기(차단)'</b>에 매달려 본성과 싸우다 졌습니다. 진짜 지렛대는 정반대편 — <span class="accent">복귀의 마찰을 낮추는 것</span>. 그리고 휴식엔 '언제 돌아올지'의 기준, 즉 <b style="color:var(--ink)">'닫는 괄호'</b>가 없습니다.</p>
-  </div>
-</section>
-
-<!-- HOW -->
-<section class="sec" id="how">
-  <div class="wrap reveal">
-    <div class="eyebrow">설계 철학 · 몰입 중엔 무음, 경계에서만 작동</div>
-    <h2>1차 버전은 <span class="accent">크롬 익스텐션</span> 하나입니다.</h2>
-    <p class="lead">데스크톱 공부 환경에서, 지능은 세 경계 — <b style="color:var(--ink)">진입 · 이탈 감지 · 복귀</b> — 에만 집중합니다. 그 사이(몰입)엔 투명합니다. 포모도로처럼 흐름을 깨지 않습니다.</p>
-
-    <div class="grid3">
-      <div class="card">
-        <div class="n">01 · 이탈 감지</div>
-        <h3>선언 없이, 신호로</h3>
-        <p>탭 전환(visibilitychange)과 유휴 60초+(chrome.idle)의 조합. "5분이 50분 되는" 긴 이탈을 잡습니다.</p>
-      </div>
-      <div class="card">
-        <div class="n">02 · 맥락 보존</div>
-        <h3>'거의 무마찰'</h3>
-        <p>완전 무입력(입력 0)은 버렸습니다. 떠날 때 한 줄 적는 '능동적 행위'가 효과의 핵심이라는 연구에 따라, 한 탭으로 '다음 한 줄'을 남깁니다.</p>
-      </div>
-      <div class="card">
-        <div class="n">03 · 따뜻한 이어하기</div>
-        <h3>그 한 줄을 건넨다</h3>
-        <p>복귀 시 저장된 한 줄과 마지막 탭을 다시 띄웁니다. 죄 갚기가 아니라 '리듬 재개'로. 죄책감을 빼야 다음 복귀가 가볍습니다.</p>
-      </div>
-    </div>
-    <p class="lead" style="margin-top:30px;font-size:15px;color:var(--mut2)">근거: Leroy &amp; Glomb (2018, <i>Organization Science</i>) — 떠날 때 '어디서 이어갈지'를 1분만 적어도 주의 잔류가 줄고 다음 수행이 향상됨(4개 연구 인과 검증). 우리 가설과 1:1로 일치하지만, 아직 아무도 제품화하지 않았습니다.</p>
-  </div>
-</section>
-
-<!-- DIFF -->
-<section class="sec" id="diff">
-  <div class="wrap reveal">
-    <div class="eyebrow">경쟁 지형</div>
-    <h2>시장은 '차단'과 '측정'으로만 갈렸습니다.<br><span class="accent">'복귀 설계'의 자리는 비어 있습니다.</span></h2>
-
-    <div class="table">
-      <div class="tr head"><div>서비스</div><div>접근</div><div>못 하는 것</div></div>
-      <div class="tr"><div>Forest / Freedom</div><div>이탈을 차단</div><div>본성과 싸움. 복귀는 0</div></div>
-      <div class="tr"><div>열품타</div><div>시간 측정 · 소셜 인증</div><div>'복귀 설계'는 0</div></div>
-      <div class="tr"><div>Pomofocus</div><div>시계 기반 포모도로</div><div>'닫는 괄호'의 원시형. 맥락 · 개인화 0</div></div>
-      <div class="tr"><div>Focusmate</div><div>카메라 바디더블링</div><div>마찰 크고 맥락 보존 0</div></div>
-      <div class="tr usrow"><div class="us">다시(Dasi)</div><div class="us">복귀의 마찰을 낮춤</div><div class="us">떠날 때 '다음 한 줄'을 붙잡고, 돌아올 때 건넨다</div></div>
-    </div>
-    <p class="lead" style="margin-top:30px">기능(탭 감지 · 세션 복원)은 복제 가능함을 압니다. 그래서 해자를 기술이 아니라 — <b style="color:var(--ink)">①복귀 마찰이 가장 큰 좁은 세그먼트를 가장 먼저 먹는 속도, ②복귀 행동 데이터의 선점</b>에 둡니다. 진짜 차별점은 <span class="accent">'복귀의 효과를 측정한다'는 관점 그 자체</span>입니다.</p>
   </div>
 </section>
 
 <!-- QUOTE -->
 <section class="quote">
   <div class="wrap reveal">
-    <blockquote>"AI는 완벽한 계획을 30초 만에 1,000개 짜줍니다.<br>하지만 책상을 떠난 당신을 <span class="grad">다시 책상 앞에</span> 앉히진 못합니다."</blockquote>
-    <cite>— 계획 1,000개보다 복귀 1번이 비싸지는 시대</cite>
+    <blockquote>"우리는 답을 의심한 게 아니라,<br><span class="grad">질문</span>을 의심했습니다."</blockquote>
+    <cite>— 틀린 문제를 잘 푸는 것보다, 옳은 문제를 찾는 것이 먼저다</cite>
   </div>
 </section>
 
 <!-- TEAM -->
 <section class="sec" id="team">
-  <div class="wrap reveal">
-    <div class="eyebrow">팀 · founder–market fit</div>
-    <h2>"내가 가장 충성스러운 <span class="accent">이탈자</span>였습니다."</h2>
-    <p class="lead">결심은 누구보다 많이, 책상은 누구보다 자주 떠났습니다. 그래서 이 고통을 머리가 아니라 몸으로 압니다. 애착(FocusTime)보다 진실(인터뷰)을 택해 폐기하고 다시 정의했습니다.</p>
+  <div class="wrap">
+    <div class="eyebrow reveal">팀 · founder–market fit</div>
+    <h2 class="sectitle reveal">"내가 가장 충성스러운 <span class="accent">이탈자</span>였습니다."</h2>
+    <p class="secsub reveal">결심은 누구보다 많이, 책상은 누구보다 자주 떠났습니다. 그래서 이 고통을 머리가 아니라 몸으로 압니다. 애착(FocusTime)보다 진실(현장)을 택해, 만들던 것을 버리고 문제로 되돌아왔습니다.</p>
 
     <div class="team">
-      <div class="person">
+      <div class="person reveal">
         <div class="role">대표</div>
         <div class="name">김범수</div>
-        <p>가천대 AI · 산업공학 복수전공이자 이 문제의 '이탈' 당사자. 화상매칭(FocusTime)을 만들려다 고등학생 20명 인터뷰로 문제정의가 틀렸음을 깨닫고 폐기 · 재정의했습니다. 빅콘테스트에서 신한카드 데이터로 마케팅 AI 챗봇을 구현해 세종시 경진대회를 수상. 수상 나열보다 이 문제에 들인 시간으로 평가받고 싶습니다.</p>
+        <p>가천대 AI · 산업공학 복수전공이자 이 문제의 '이탈' 당사자. 집중력 부재를 가정한 화상매칭(FocusTime)을 만들려다, 고등학생 20명 인터뷰로 문제정의가 틀렸음을 깨닫고 폐기·재정의했습니다. 빅콘테스트에서 신한카드 데이터로 마케팅 AI 챗봇을 구현해 세종시 경진대회를 수상. 수상 나열보다 이 문제에 들인 시간으로 평가받고 싶습니다.</p>
       </div>
-      <div class="person">
+      <div class="person reveal">
         <div class="role">공동창업자 · 개발</div>
         <div class="name">개발 담당</div>
-        <p>가천대 소프트웨어학과. 크롬 익스텐션 기반 이탈 감지 · 세션 복원 구현 담당. UMC 대학연합개발동아리 개발팀장, 정보처리기사 · 리눅스마스터 보유. 최신 기술을 곧장 제품에 붙이는 실행력이 강합니다. 둘 다 재학생이라 아직 풀타임은 아니며, 매주 시간을 넣어 v1 데모로 증명하겠습니다.</p>
+        <p>가천대 소프트웨어학과. UMC 대학연합개발동아리 개발팀장, 정보처리기사·리눅스마스터 보유. 최신 기술을 곧장 제품에 붙이는 실행력이 강합니다. 창업대학에서 학생 공부습관 문제정의를 처음부터 함께했습니다. 둘 다 재학생이라 아직 풀타임은 아니며, 매주 시간을 넣어 증명하겠습니다.</p>
       </div>
     </div>
 
-    <div class="stage">📍 현재 단계 — 아이디어 단계 · 가장 싼 검증(수동 컨시어지)부터 손으로 시작합니다.</div>
+    <div class="stage reveal"><span>📍 현재 단계 — 아이디어 단계 · 가장 싼 검증부터 손으로 시작합니다.</span></div>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="wrap">
     <div class="logo"><span class="dot"></span>다시 <span style="font-weight:500;color:var(--mut);font-size:14px">Dasi</span></div>
