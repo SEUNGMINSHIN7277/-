@@ -137,6 +137,17 @@ python -m factory batch --count 5 --publish    # ...and upload them
 Character pairs: `dad_daughter`, `mom_son`, `couple`,
 `grandma_grandchild`, `grandpa_grandchild`, `siblings`.
 
+### Two visual formats
+
+```bash
+python -m factory demo --format call    # phone call-recording UI (default)
+python -m factory demo --format scene   # split-screen room scene (Format B)
+```
+- **call** — black "call recording" screen, diagonal avatars, center waveform.
+- **scene** — top/bottom split, each speaker in a cozy room with a name badge.
+  For a premium Pixar-style look, set `avatar_provider: files` and drop
+  AI-illustrated character PNGs into `assets/avatars/`.
+
 ---
 
 ## Run it while you sleep 😴

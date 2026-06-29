@@ -27,6 +27,28 @@ CAPTION = {"cx": 540, "cy": 1610, "max_w": 980, "size": 74}
 REC = {"cx": 540, "cy": 1800}
 
 
+# ----- Format B (split-screen "scene") geometry -----
+# A occupies the TOP half, B the BOTTOM half.
+SCENE = {
+    "half_h": 960,
+    "title_top": 34,
+    "char_h": 560,                 # rendered character height
+    "charA_cy": 470, "charB_cy": 1330,
+    "labelA_cy": 760, "labelB_cy": 1620,
+    "capA": (540, 868), "capB": (540, 1812),
+    "cap_size": 70, "cap_max_w": 940,
+}
+
+
+def scene_half_box(which: str) -> tuple[int, int, int, int]:
+    """(x,y,w,h) of the top (A) or bottom (B) half, for dimming the inactive one."""
+    return (0, 0, W, SCENE["half_h"]) if which == "A" else (0, SCENE["half_h"], W, H - SCENE["half_h"])
+
+
+def scene_caption_pos() -> dict:
+    return {"A": SCENE["capA"], "B": SCENE["capB"]}
+
+
 def avatar_box(which: str) -> tuple[int, int, int, int]:
     """Return (x, y, w, h) of the avatar image box for 'A' or 'B'."""
     cx, cy = A_CENTER if which == "A" else B_CENTER

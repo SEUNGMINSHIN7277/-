@@ -23,6 +23,45 @@ def _escape_ass(path: str) -> str:
     return path.replace("\\", "\\\\").replace(":", "\\:").replace("'", "\\'")
 
 
+def render_scene(base_png: str, voice_track: str, segments, ass_path: str,
+                 out_path: str, settings: Settings, total: float,
+                 music_path: str | None = None) -> str:
+    """Format B compositor: dim the inactive half + per-speaker captions."""
+    tax, tay, taw, tah = L.scene_half_box("A")   # top half
+    bx, by, bw, bh = L.scene_half_box("B")        # bottom half
+    dim = round(1.0 - settings.dim_inactive, 2)
+    enTop = _enable_expr(segments, "B")   # dim TOP (A) while B speaks
+    enBot = _enable_expr(segments, "A")   # dim BOTTOM (B) while A speaks
+    ass = _escape_ass(os.path.abspath(ass_path))
+
+    inputs = ["-loop", "1", "-i", base_png, "-i", voice_track]
+    has_music = bool(music_path and os.path.exists(music_path))
+    if has_music:
+        inputs += ["-stream_loop", "-1", "-i", music_path]
+
+    fc = (
+        f"[0:v]scale={L.W}:{L.H},setsar=1,format=rgba[bg];"
+        f"[bg]drawbox=x={tax}:y={tay}:w={taw}:h={tah}:color=black@{dim}:t=fill:enable='{enTop}',"
+        f"drawbox=x={bx}:y={by}:w={bw}:h={bh}:color=black@{dim}:t=fill:enable='{enBot}'[bgd];"
+        f"[bgd]ass='{ass}',format=yuv420p[v]"
+    )
+    if has_music:
+        fc += (";[1:a]aformat=sample_rates=44100:channel_layouts=stereo[a1];"
+               "[2:a]volume=0.10,aformat=sample_rates=44100:channel_layouts=stereo[a2];"
+               "[a1][a2]amix=inputs=2:duration=first:dropout_transition=0[a]")
+        amap = "[a]"
+    else:
+        amap = "1:a"
+
+    cmd = [ffmpeg_exe(), "-y", *inputs, "-filter_complex", fc,
+           "-map", "[v]", "-map", amap, "-t", f"{total:.2f}",
+           "-c:v", "libx264", "-preset", "medium", "-crf", "18",
+           "-pix_fmt", "yuv420p", "-r", str(settings.fps),
+           "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", out_path]
+    run(cmd)
+    return out_path
+
+
 def render(base_png: str, voice_track: str, segments, ass_path: str,
            out_path: str, settings: Settings, total: float,
            music_path: str | None = None) -> str:

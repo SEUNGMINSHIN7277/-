@@ -40,7 +40,10 @@ def _wrap(text: str, max_chars: int = 19, max_lines: int = 3) -> str:
     return "\\N".join(lines)
 
 
-def build_ass(segments, settings: Settings, out_path: str) -> str:
+def build_ass(segments, settings: Settings, out_path: str,
+              positions: dict | None = None) -> str:
+    """positions: optional {"A": (cx,cy), "B": (cx,cy)} to place each speaker's
+    caption (used by the scene format). Defaults to the single CAPTION spot."""
     size = L.CAPTION["size"]
     margin = (L.W - L.CAPTION["max_w"]) // 2
     header = f"""[Script Info]
@@ -57,9 +60,10 @@ Style: Cap,{settings.caption_font},{size},&H00FFFFFF,&H00000000,&H80000000,-1,0,
 [Events]
 Format: Layer, Start, End, Style, MarginL, MarginR, MarginV, Effect, Text
 """
-    cx, cy = L.CAPTION["cx"], L.CAPTION["cy"]
+    default = (L.CAPTION["cx"], L.CAPTION["cy"])
     rows = []
     for seg in segments:
+        cx, cy = (positions or {}).get(seg.speaker, default)
         color = _ass_color(settings.speaker_color(seg.speaker))
         text = _wrap(seg.en)
         over = f"\\an5\\pos({cx},{cy})\\c{color}\\fad(90,50)"

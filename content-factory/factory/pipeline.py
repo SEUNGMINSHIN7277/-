@@ -9,7 +9,8 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import audio, compositor, frame, metadata, subtitles
+from . import audio, compositor, frame, frame_scene, metadata, subtitles
+from . import layout as L
 from .config import ROOT, Settings
 from .script_model import Script
 
@@ -33,13 +34,22 @@ def render_video(script: Script, settings: Settings,
     Path(out_dir).mkdir(parents=True, exist_ok=True)
 
     audio_res = audio.build(script, settings, out_dir)
-    base_png = frame.render_base(script, settings, out_dir)
-    ass_path = subtitles.build_ass(audio_res.segments, settings, str(Path(out_dir) / "subs.ass"))
-
     video = str(Path(out_dir) / f"{script.id}.mp4")
-    compositor.render(base_png, audio_res.path, audio_res.segments, ass_path,
-                      video, settings, audio_res.total,
-                      music_path=os.environ.get("MUSIC_PATH"))
+    music = os.environ.get("MUSIC_PATH")
+
+    if settings.video_format == "scene":
+        base_png = frame_scene.render_base(script, settings, out_dir)
+        ass_path = subtitles.build_ass(audio_res.segments, settings,
+                                       str(Path(out_dir) / "subs.ass"),
+                                       positions=L.scene_caption_pos())
+        compositor.render_scene(base_png, audio_res.path, audio_res.segments, ass_path,
+                                video, settings, audio_res.total, music_path=music)
+    else:
+        base_png = frame.render_base(script, settings, out_dir)
+        ass_path = subtitles.build_ass(audio_res.segments, settings,
+                                       str(Path(out_dir) / "subs.ass"))
+        compositor.render(base_png, audio_res.path, audio_res.segments, ass_path,
+                          video, settings, audio_res.total, music_path=music)
 
     meta = metadata.build_metadata(script)
     meta["duration"] = audio_res.total
@@ -56,6 +66,6 @@ def render_video(script: Script, settings: Settings,
 
 def _cleanup(out_dir: str) -> None:
     p = Path(out_dir)
-    for pat in ("line_*.wav", "sil_*.wav", "concat.txt", "frame.html"):
+    for pat in ("line_*.wav", "sil_*.wav", "concat.txt", "frame.html", "frame_scene.html"):
         for f in p.glob(pat):
             f.unlink(missing_ok=True)

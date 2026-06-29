@@ -49,6 +49,7 @@ class Settings:
     height: int = 1920
     fps: int = 30
     supersample: int = 2          # render HTML at 2x then downscale = crisp
+    video_format: str = "call"    # call (recording UI) | scene (split-screen room)
 
     # ---- pacing (seconds) ----
     lead_in: float = 0.45         # silence before first line
@@ -99,6 +100,8 @@ def load_settings() -> Settings:
         for key in ("width", "height", "fps", "supersample"):
             if data.get(key):
                 setattr(s, key, int(data[key]))
+        if data.get("video_format"):
+            s.video_format = str(data["video_format"])
         for key in ("lead_in", "gap", "lead_out", "syllables_per_sec", "dim_inactive"):
             if data.get(key):
                 setattr(s, key, float(data[key]))
@@ -108,4 +111,6 @@ def load_settings() -> Settings:
     ):
         if os.environ.get(env_key):
             setattr(s, attr, os.environ[env_key])
+    if os.environ.get("VIDEO_FORMAT"):
+        s.video_format = os.environ["VIDEO_FORMAT"]
     return s

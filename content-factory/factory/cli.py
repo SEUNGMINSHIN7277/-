@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import time
 import traceback
 from pathlib import Path
@@ -80,11 +81,14 @@ def main(argv=None) -> None:
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("avatars").set_defaults(func=cmd_avatars)
-    sub.add_parser("demo").set_defaults(func=cmd_demo)
+    d = sub.add_parser("demo")
+    d.add_argument("--format", choices=["call", "scene"], default=None)
+    d.set_defaults(func=cmd_demo)
 
     m = sub.add_parser("make")
     m.add_argument("--pair", default=None, help="dad_daughter, couple, grandma_grandchild, ...")
     m.add_argument("--topic", default=None)
+    m.add_argument("--format", choices=["call", "scene"], default=None)
     m.add_argument("--publish", action="store_true")
     m.set_defaults(func=cmd_make)
 
@@ -92,11 +96,14 @@ def main(argv=None) -> None:
     b.add_argument("--count", type=int, default=3)
     b.add_argument("--pair", default=None)
     b.add_argument("--topic", default=None)
+    b.add_argument("--format", choices=["call", "scene"], default=None)
     b.add_argument("--publish", action="store_true")
     b.add_argument("--sleep", type=float, default=0)
     b.set_defaults(func=cmd_batch)
 
     args = p.parse_args(argv)
+    if getattr(args, "format", None):
+        os.environ["VIDEO_FORMAT"] = args.format
     args.func(args)
 
 
