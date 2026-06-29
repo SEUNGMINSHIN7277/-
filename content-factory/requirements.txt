@@ -3,6 +3,7 @@ imageio-ffmpeg>=0.4.9      # bundles a static ffmpeg (no apt/root needed)
 requests>=2.31
 PyYAML>=6.0
 edge-tts>=6.1             # FREE Korean TTS (no API key) — the default voice engine
+espeakng-loader>=0.2     # bundled libespeak-ng -> always-audible OFFLINE Korean fallback
 
 # --- script generation ---
 # gemini (free tier) needs no extra package — it's a plain REST call via requests.

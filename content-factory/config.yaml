@@ -2,7 +2,9 @@
 
 # --- providers (defaults are ZERO-COST) ---
 llm_provider: gemini        # gemini(free tier) | anthropic | seed  (no key -> seed library)
-tts_provider: edge          # edge(FREE, no key) | elevenlabs | azure | google | demo
+tts_provider: edge          # edge(FREE neural, no key) | espeak(offline robotic) | elevenlabs | azure | google | demo
+# Note: if the chosen provider can't reach the network, it auto-falls back to
+# espeak (real, robotic Korean) so a voice is ALWAYS audible — never silent.
 avatar_provider: svg        # svg | files  (files = drop <role>.png in assets/avatars/)
 publish_provider: none      # youtube | none
 

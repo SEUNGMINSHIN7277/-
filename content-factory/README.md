@@ -98,6 +98,7 @@ Every step has a free path, so you can launch with **no money and no credit card
 | Need | Free option | Key? | Notes |
 |------|-------------|------|-------|
 | Korean voices | **edge-tts** (Microsoft Edge voices) | ❌ none | same ko-KR neural voices as Azure, $0 — this is the default |
+| Korean voices (offline) | **espeak-ng** (bundled) | ❌ none | robotic but 100% offline; auto-fallback so audio is **never silent** |
 | Scripts | **Gemini free tier** (Google AI Studio) | free key, no card | `https://aistudio.google.com/apikey` |
 | Scripts (no key at all) | **seed library** | ❌ none | 4 hand-written skits that rotate |
 | Avatars | generated SVG | ❌ | free |

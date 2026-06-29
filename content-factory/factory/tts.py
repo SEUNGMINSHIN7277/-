@@ -43,6 +43,17 @@ def _normalize(src: str, dst: str) -> None:
     run([ffmpeg_exe(), "-y", "-i", src, "-ar", AR, "-ac", "2", dst])
 
 
+def wav_duration(path: str) -> float | None:
+    """Exact duration of a WAV via the stdlib (no ffprobe needed). All clips
+    are normalized to WAV, so this keeps captions perfectly in sync with audio."""
+    try:
+        import wave
+        with wave.open(path, "rb") as w:
+            return w.getnframes() / float(w.getframerate())
+    except Exception:
+        return None
+
+
 def probe_duration(path: str) -> float | None:
     fp = ffprobe_exe()
     if fp:
@@ -163,6 +174,14 @@ def synthesize_line(line: Line, char: Character, idx: int, out_dir: str,
     out = str(Path(out_dir) / f"line_{idx:02d}.wav")
     spoken = clean_tts(line.tts)
     p = settings.tts_provider
+
+    def _via_espeak() -> str:
+        from . import espeak_tts
+        raw = out + ".espk.wav"
+        espeak_tts.synth(spoken, char.role, raw)
+        _normalize(raw, out)
+        return out
+
     try:
         if p == "edge":  # free, no key required
             _edge(spoken, char.role, char.voice, out)
@@ -172,12 +191,23 @@ def synthesize_line(line: Line, char: Character, idx: int, out_dir: str,
             _azure(spoken, char.role, char.voice, out)
         elif p == "google" and os.environ.get("GOOGLE_TTS_API_KEY"):
             _google(spoken, char.role, char.voice, out)
+        elif p == "espeak":  # offline, real (robotic) Korean
+            _via_espeak()
         else:
             raise RuntimeError("no-tts-key")
-        dur = probe_duration(out) or estimate_duration(spoken, settings, line.emote)
+        dur = wav_duration(out) or estimate_duration(spoken, settings, line.emote)
         return out, dur
     except Exception as exc:
-        if p != "demo":
-            print(f"[tts] {p} failed on line {idx} ({exc}); using offline placeholder")
+        if p not in ("demo", "espeak"):
+            print(f"[tts] {p} failed on line {idx} ({exc}); trying offline Korean (espeak)")
+        # Prefer REAL offline Korean over a silent tone, so a voice is always heard.
+        try:
+            from . import espeak_tts
+            if espeak_tts.available():
+                _via_espeak()
+                dur = wav_duration(out) or estimate_duration(spoken, settings, line.emote)
+                return out, dur
+        except Exception as e2:
+            print(f"[tts] espeak fallback failed ({e2}); using tone placeholder")
         dur = estimate_duration(spoken, settings, line.emote)
         return _demo(spoken, char.role, dur, out), dur
