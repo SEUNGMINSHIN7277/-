@@ -179,6 +179,14 @@ recording, ever. On any machine with normal internet, `edge-tts` produces
 you hear a robotic voice is in a locked-down environment with no network — then
 the code auto-falls back to offline `espeak` so it's still audible.
 
+### ⭐ Easiest: Google Colab (one click, natural voice)
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/SEUNGMINSHIN7277/-/blob/claude/monetize-code-automation-e8tzee/content-factory/notebooks/colab_make_shorts.ipynb)
+
+Open the notebook → **Runtime ▸ Run all** → in ~2–3 min a finished short with a
+**natural Korean neural voice** plays and downloads. No install, no keys, no
+recording. (Colab has open internet, so `edge-tts` works automatically.)
+
 ### Cloud automation (natural voice, zero local setup)
 
 Don't want to install anything? Run it in the cloud, where the internet is open

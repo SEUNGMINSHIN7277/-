@@ -13,18 +13,20 @@ from __future__ import annotations
 import os
 
 # edge-tts (FREE, no API key) — same Microsoft ko-KR neural voices as Azure.
-# (voice, rate%, pitchHz). Child = pitch way up; elderly = lower + slower.
+# (voice, rate%, pitchHz). Pitch shifts are kept MODEST on purpose: large
+# shifts make the neural voice sound chipmunky/robotic, which kills the
+# natural feel. We lean on voice CHOICE + small adjustments for character.
 EDGE = {
-    "little_girl": ("ko-KR-SeoHyeonNeural", "-3%",  "+48Hz"),
-    "little_boy":  ("ko-KR-SeoHyeonNeural", "+0%",  "+36Hz"),
-    "teen_girl":   ("ko-KR-JiMinNeural",    "+3%",  "+14Hz"),
-    "teen_boy":    ("ko-KR-InJoonNeural",   "+4%",  "+22Hz"),
+    "little_girl": ("ko-KR-SeoHyeonNeural", "-2%",  "+20Hz"),
+    "little_boy":  ("ko-KR-SeoHyeonNeural", "+0%",  "+14Hz"),
+    "teen_girl":   ("ko-KR-JiMinNeural",    "+2%",  "+8Hz"),
+    "teen_boy":    ("ko-KR-HyunsuMultilingualNeural", "+3%", "+10Hz"),
     "young_woman": ("ko-KR-JiMinNeural",    "+0%",  "+0Hz"),
     "young_man":   ("ko-KR-InJoonNeural",   "+0%",  "+0Hz"),
-    "mom":         ("ko-KR-SunHiNeural",    "-2%",  "-4Hz"),
-    "dad":         ("ko-KR-InJoonNeural",   "-4%",  "-22Hz"),
-    "grandma":     ("ko-KR-SunHiNeural",    "-12%", "-10Hz"),
-    "grandpa":     ("ko-KR-BongJinNeural",  "-12%", "-28Hz"),
+    "mom":         ("ko-KR-SunHiNeural",    "-2%",  "-2Hz"),
+    "dad":         ("ko-KR-InJoonNeural",   "-3%",  "-10Hz"),
+    "grandma":     ("ko-KR-SunHiNeural",    "-8%",  "-6Hz"),
+    "grandpa":     ("ko-KR-BongJinNeural",  "-8%",  "-14Hz"),
 }
 
 # Azure ko-KR neural voices + per-role prosody (pitch, rate) for character.
