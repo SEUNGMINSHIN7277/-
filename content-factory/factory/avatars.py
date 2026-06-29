@@ -154,11 +154,18 @@ def _render_png(svg: str, out_png: Path) -> Path:
     env = dict(os.environ)
     env.setdefault("NODE_PATH", subprocess.run(
         ["npm", "root", "-g"], capture_output=True, text=True).stdout.strip())
-    subprocess.run(
+    res = subprocess.run(
         ["node", str(RENDER_JS), "--html", str(tmp), "--out", str(out_png),
          "--width", str(W), "--height", str(H), "--selector", "#a", "--transparent"],
-        check=True, env=env, capture_output=True, text=True,
+        env=env, capture_output=True, text=True,
     )
+    if res.returncode != 0 or not out_png.exists():
+        raise RuntimeError(
+            "avatar render via node/Playwright failed. Make sure Node + "
+            "Playwright Chromium are installed (`npm install` + "
+            "`npx playwright install --with-deps chromium`).\n"
+            f"--- node stderr ---\n{res.stderr[-1800:]}\n--- node stdout ---\n{res.stdout[-400:]}"
+        )
     tmp.unlink(missing_ok=True)
     return out_png
 

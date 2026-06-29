@@ -136,11 +136,17 @@ def render_base(script: Script, settings: Settings, out_dir: str) -> str:
     env = dict(os.environ)
     env.setdefault("NODE_PATH", subprocess.run(
         ["npm", "root", "-g"], capture_output=True, text=True).stdout.strip())
-    subprocess.run(
+    res = subprocess.run(
         ["node", str(RENDER_JS), "--html", str(html_path), "--out", str(out_png),
          "--width", str(L.W), "--height", str(L.H), "--selector", "#stage"],
-        check=True, env=env, capture_output=True, text=True,
+        env=env, capture_output=True, text=True,
     )
+    if res.returncode != 0 or not Path(out_png).exists():
+        raise RuntimeError(
+            "frame render via node/Playwright failed. Ensure Node + Playwright "
+            "Chromium are installed.\n"
+            f"--- node stderr ---\n{res.stderr[-1800:]}\n--- node stdout ---\n{res.stdout[-400:]}"
+        )
     return str(out_png)
 
 
