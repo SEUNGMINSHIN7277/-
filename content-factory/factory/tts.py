@@ -21,6 +21,14 @@ from .script_model import Character, Line
 AR = "44100"
 
 
+def clean_tts(text: str) -> str:
+    """Strip stage directions / SFX in (parentheses) so they aren't spoken,
+    and tidy whitespace. The English subtitle keeps the *action* separately."""
+    text = re.sub(r"[（(][^)）]*[)）]", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text or "..."
+
+
 def estimate_duration(text: str, settings: Settings, emote: str = "neutral") -> float:
     syl = len(re.findall(r"[가-힣]", text)) or max(1, len(text.split()))
     base = syl / settings.syllables_per_sec
@@ -153,22 +161,23 @@ def _xml_escape(s: str) -> str:
 def synthesize_line(line: Line, char: Character, idx: int, out_dir: str,
                     settings: Settings) -> tuple[str, float]:
     out = str(Path(out_dir) / f"line_{idx:02d}.wav")
+    spoken = clean_tts(line.tts)
     p = settings.tts_provider
     try:
         if p == "edge":  # free, no key required
-            _edge(line.tts, char.role, char.voice, out)
+            _edge(spoken, char.role, char.voice, out)
         elif p == "elevenlabs" and os.environ.get("ELEVENLABS_API_KEY"):
-            _elevenlabs(line.tts, char.role, char.voice, out)
+            _elevenlabs(spoken, char.role, char.voice, out)
         elif p == "azure" and os.environ.get("AZURE_SPEECH_KEY"):
-            _azure(line.tts, char.role, char.voice, out)
+            _azure(spoken, char.role, char.voice, out)
         elif p == "google" and os.environ.get("GOOGLE_TTS_API_KEY"):
-            _google(line.tts, char.role, char.voice, out)
+            _google(spoken, char.role, char.voice, out)
         else:
             raise RuntimeError("no-tts-key")
-        dur = probe_duration(out) or estimate_duration(line.tts, settings, line.emote)
+        dur = probe_duration(out) or estimate_duration(spoken, settings, line.emote)
         return out, dur
     except Exception as exc:
         if p != "demo":
             print(f"[tts] {p} failed on line {idx} ({exc}); using offline placeholder")
-        dur = estimate_duration(line.tts, settings, line.emote)
-        return _demo(line.tts, char.role, dur, out), dur
+        dur = estimate_duration(spoken, settings, line.emote)
+        return _demo(spoken, char.role, dur, out), dur

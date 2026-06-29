@@ -1,0 +1,113 @@
+{
+  "id": "dad-daughter-allowance-negotiation-003",
+  "pair": "dad_daughter",
+  "title_en": "My 4-Year-Old\nLawyered Up On Me",
+  "characters": {
+    "A": {
+      "id": "A",
+      "role": "dad",
+      "label": "Dad",
+      "corner": "top_left"
+    },
+    "B": {
+      "id": "B",
+      "role": "little_girl",
+      "label": "CEO Baby",
+      "corner": "bottom_right"
+    }
+  },
+  "lines": [
+    {
+      "speaker": "B",
+      "tts": "아빠. 앉아. 변호사 데려왔어여.",
+      "en": "Sit. *slides folder* I brought my lawyer.",
+      "emote": "neutral"
+    },
+    {
+      "speaker": "A",
+      "tts": "...너 네 살이야.",
+      "en": "...You're four.",
+      "emote": "surprised"
+    },
+    {
+      "speaker": "B",
+      "tts": "천 원언 인플레이션이여. 협상해여.",
+      "en": "One thousand won is infwation. We negotiate.",
+      "emote": "neutral"
+    },
+    {
+      "speaker": "A",
+      "tts": "인플레이션? 그 단어 어디서 배웠어?",
+      "en": "Inflation? Where'd you even learn that?",
+      "emote": "surprised"
+    },
+    {
+      "speaker": "B",
+      "tts": "엄마가 아빠 보면서 맨날 한 말이여.",
+      "en": "Mommy says it. Looking at you. Evewy day.",
+      "emote": "laugh"
+    },
+    {
+      "speaker": "A",
+      "tts": "...얼마 원하세요, 사장님.",
+      "en": "...Your number, boss.",
+      "emote": "laugh"
+    },
+    {
+      "speaker": "B",
+      "tts": "오천. 안 그럼 뽀뽀 서비스 중단이여.",
+      "en": "Five thousand. Or kissy service shuts down.",
+      "emote": "pout"
+    },
+    {
+      "speaker": "A",
+      "tts": "뽀뽀를 인질로 잡아?",
+      "en": "You're holding kisses hostage?!",
+      "emote": "surprised"
+    },
+    {
+      "speaker": "B",
+      "tts": "비지니스언 원래 차가운 거여, 아빠.",
+      "en": "Bizniss is cold, Daddy. Ice cold.",
+      "emote": "neutral"
+    },
+    {
+      "speaker": "A",
+      "tts": "삼천. 안아주기 포함. 최종이여.",
+      "en": "Three thousand. Hugs included. Final.",
+      "emote": "laugh"
+    },
+    {
+      "speaker": "B",
+      "tts": "...변호사님이 안 된대여.",
+      "en": "*whispers to teddy* ...My lawyer says no.",
+      "emote": "neutral"
+    },
+    {
+      "speaker": "A",
+      "tts": "변호사가 누군데?",
+      "en": "And who IS your lawyer?",
+      "emote": "surprised"
+    },
+    {
+      "speaker": "B",
+      "tts": "곰돌이 변호사님. 수임료 꿀 한 숟갈.",
+      "en": "Mister Teddy Bear, Esquire. Retainer: one spoon of honey.",
+      "emote": "shy"
+    },
+    {
+      "speaker": "A",
+      "tts": "...이 집에서 제일 무서운 게 너야.",
+      "en": "*slides 5,000* ...You're the scariest person in this house.",
+      "emote": "laugh"
+    }
+  ],
+  "hashtags": [
+    "ceobaby",
+    "toddlerlogic",
+    "lawyeredup",
+    "koreanskit",
+    "dadjokesback"
+  ],
+  "description_en": "A 4-year-old renegotiates her allowance citing inflation, holds kisses hostage, and consults her lawyer (a teddy bear)."
+}

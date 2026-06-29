@@ -60,8 +60,10 @@ class Script:
             for k, v in d["characters"].items()
         }
         lines = [Line(**l) if not isinstance(l, Line) else l for l in d["lines"]]
+        # models sometimes emit a literal backslash-n instead of a real newline
+        title = str(d["title_en"]).replace("\\n", "\n").strip()
         return Script(
-            id=d["id"], pair=d.get("pair", "custom"), title_en=d["title_en"],
+            id=d["id"], pair=d.get("pair", "custom"), title_en=title,
             characters=chars, lines=lines,
             hashtags=d.get("hashtags", []), description_en=d.get("description_en", ""),
         )
