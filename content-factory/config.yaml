@@ -1,8 +1,8 @@
 # Creative direction + look. Secrets go in .env (see .env.example).
 
-# --- providers ---
-llm_provider: anthropic     # anthropic | seed  (seed = rotate the hand-written library)
-tts_provider: demo          # elevenlabs | azure | google | demo  (demo = offline placeholder)
+# --- providers (defaults are ZERO-COST) ---
+llm_provider: gemini        # gemini(free tier) | anthropic | seed  (no key -> seed library)
+tts_provider: edge          # edge(FREE, no key) | elevenlabs | azure | google | demo
 avatar_provider: svg        # svg | files  (files = drop <role>.png in assets/avatars/)
 publish_provider: none      # youtube | none
 

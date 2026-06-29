@@ -91,18 +91,34 @@ scripts + real Korean voices.
 
 ---
 
-## Which API keys (and rough cost)
+## 💸 Run it for $0 (zero-capital mode — the default)
 
-| Need | Provider | Cost | Notes |
-|------|----------|------|-------|
-| Scripts | **Anthropic (Claude)** | ~$0.01–0.05 / script | `LLM_PROVIDER=anthropic` |
-| Korean voices | **ElevenLabs** | from $5/mo | best naturalness + voice variety; map voice ids per role |
-| Korean voices (cheaper) | **Azure Speech** | ~$16 / 1M chars | SSML pitch → easy cute child voice; defaults provided |
-| Korean voices (cheaper) | **Google Cloud TTS** | ~$16 / 1M chars | Wavenet/Neural2 + pitch |
-| Upload | **YouTube Data API** | free | OAuth once |
+Every step has a free path, so you can launch with **no money and no credit card**:
 
-A ~45-second skit is ~250 Korean characters, so TTS is a fraction of a cent per
-video on Azure/Google. Realistically **well under $0.10 per finished video.**
+| Need | Free option | Key? | Notes |
+|------|-------------|------|-------|
+| Korean voices | **edge-tts** (Microsoft Edge voices) | ❌ none | same ko-KR neural voices as Azure, $0 — this is the default |
+| Scripts | **Gemini free tier** (Google AI Studio) | free key, no card | `https://aistudio.google.com/apikey` |
+| Scripts (no key at all) | **seed library** | ❌ none | 4 hand-written skits that rotate |
+| Avatars | generated SVG | ❌ | free |
+| Rendering / running | ffmpeg + Playwright on your PC | ❌ | free; schedule with cron |
+| Music | YouTube Audio Library / Pixabay | ❌ | optional, royalty-free |
+| Upload | YouTube Data API | free | OAuth once |
+
+So the literal cost per video is **$0**. (edge-tts uses Microsoft's public Edge
+read-aloud endpoint — no key, but it's an unofficial endpoint, so treat it as a
+free convenience that could rate-limit; the paid options below are drop-in if
+you ever outgrow it.)
+
+### Paid upgrades (only if you want to)
+
+| Need | Provider | Cost |
+|------|----------|------|
+| Voices (max quality / variety) | ElevenLabs | from $5/mo |
+| Voices | Azure / Google Cloud TTS | ~$16 / 1M chars (≈ <$0.01/video) |
+| Scripts (top quality) | Anthropic Claude | ~$0.01–0.05 / script |
+
+A ~45s skit is ~250 Korean characters, so even paid TTS is a fraction of a cent.
 
 ---
 

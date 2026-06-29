@@ -51,6 +51,23 @@ def probe_duration(path: str) -> float | None:
 
 # ---------------- providers ----------------
 
+def _edge(text: str, role: str, explicit: str, out: str) -> str:
+    """FREE Microsoft Edge neural TTS (no API key). Korean ko-KR voices."""
+    import asyncio
+    import edge_tts  # pip install edge-tts
+
+    voice, rate, pitch = voices.edge(role, explicit)
+    mp3 = out + ".mp3"
+
+    async def _run():
+        comm = edge_tts.Communicate(text, voice, rate=rate, pitch=pitch)
+        await comm.save(mp3)
+
+    asyncio.run(_run())
+    _normalize(mp3, out)
+    return out
+
+
 def _elevenlabs(text: str, role: str, explicit: str, out: str) -> str:
     import requests
     vid = voices.elevenlabs(role, explicit)
@@ -138,7 +155,9 @@ def synthesize_line(line: Line, char: Character, idx: int, out_dir: str,
     out = str(Path(out_dir) / f"line_{idx:02d}.wav")
     p = settings.tts_provider
     try:
-        if p == "elevenlabs" and os.environ.get("ELEVENLABS_API_KEY"):
+        if p == "edge":  # free, no key required
+            _edge(line.tts, char.role, char.voice, out)
+        elif p == "elevenlabs" and os.environ.get("ELEVENLABS_API_KEY"):
             _elevenlabs(line.tts, char.role, char.voice, out)
         elif p == "azure" and os.environ.get("AZURE_SPEECH_KEY"):
             _azure(line.tts, char.role, char.voice, out)

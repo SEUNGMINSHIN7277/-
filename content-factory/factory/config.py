@@ -65,9 +65,11 @@ class Settings:
     dim_inactive: float = 0.45            # opacity of the non-speaking avatar
 
     # ---- providers (env can override) ----
-    llm_provider: str = "anthropic"       # anthropic | seed
-    tts_provider: str = "demo"            # elevenlabs | azure | google | demo
-    avatar_provider: str = "svg"          # svg | files | openai
+    # Defaults are ZERO-COST: edge TTS needs no key; gemini has a free tier and
+    # falls back to the seed library if no key is set.
+    llm_provider: str = "gemini"          # gemini | anthropic | seed
+    tts_provider: str = "edge"            # edge(free) | elevenlabs | azure | google | demo
+    avatar_provider: str = "svg"          # svg | files
     publish_provider: str = "none"        # youtube | none
 
     # ---- creative direction for the script writer ----

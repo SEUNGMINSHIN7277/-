@@ -2,9 +2,12 @@
 imageio-ffmpeg>=0.4.9      # bundles a static ffmpeg (no apt/root needed)
 requests>=2.31
 PyYAML>=6.0
+edge-tts>=6.1             # FREE Korean TTS (no API key) — the default voice engine
 
-# --- script generation (optional: LLM_PROVIDER=anthropic) ---
-anthropic>=0.39
+# --- script generation ---
+# gemini (free tier) needs no extra package — it's a plain REST call via requests.
+# Only install this if you prefer Claude (LLM_PROVIDER=anthropic):
+# anthropic>=0.39
 
 # --- word-level caption timing (optional: USE_WHISPER=1) ---
 # faster-whisper>=1.0

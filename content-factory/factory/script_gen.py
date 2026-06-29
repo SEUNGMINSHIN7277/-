@@ -86,6 +86,36 @@ def _anthropic(settings: Settings, pair: str | None, topic: str | None) -> Scrip
     return script
 
 
+def _gemini(settings: Settings, pair: str | None, topic: str | None) -> Script:
+    """FREE-tier script generation via Google AI Studio (Gemini)."""
+    import requests
+
+    sys = (SYSTEM.replace("%PAIRS%", ", ".join(PAIRS))
+                 .replace("%ROLES%", ", ".join(sorted(VALID_ROLES))))
+    want_pair = pair or random.choice(list(PAIRS))
+    ask = (f"Write a NEW skit. Pair: {want_pair}. "
+           f"Topic seed: {topic or 'your choice — make it fresh and funny'}. "
+           f"Use distinct characters and a strong curiosity-gap opening.")
+    model = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
+    r = requests.post(
+        f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+        params={"key": os.environ["GEMINI_API_KEY"]},
+        json={
+            "system_instruction": {"parts": [{"text": sys}]},
+            "contents": [{"role": "user", "parts": [{"text": ask}]}],
+            "generationConfig": {"temperature": 1.05, "maxOutputTokens": 3000,
+                                 "responseMimeType": "application/json"},
+        },
+        timeout=120)
+    r.raise_for_status()
+    text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
+    script = Script.from_dict(_extract_json(text))
+    errs = script.validate()
+    if errs:
+        raise ValueError(f"model returned invalid script: {errs}")
+    return script
+
+
 def _extract_json(text: str) -> dict:
     text = text.strip()
     if text.startswith("```"):
@@ -113,9 +143,12 @@ def _seed(settings: Settings, pair: str | None) -> Script:
 
 def generate(settings: Settings, pair: str | None = None,
              topic: str | None = None) -> Script:
-    if settings.llm_provider == "anthropic" and os.environ.get("ANTHROPIC_API_KEY"):
-        try:
+    prov = settings.llm_provider
+    try:
+        if prov == "gemini" and os.environ.get("GEMINI_API_KEY"):
+            return _gemini(settings, pair, topic)
+        if prov == "anthropic" and os.environ.get("ANTHROPIC_API_KEY"):
             return _anthropic(settings, pair, topic)
-        except Exception as exc:
-            print(f"[script] anthropic failed ({exc}); falling back to seed library")
+    except Exception as exc:
+        print(f"[script] {prov} failed ({exc}); falling back to seed library")
     return _seed(settings, pair)

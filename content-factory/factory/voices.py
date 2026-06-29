@@ -12,6 +12,21 @@ from __future__ import annotations
 
 import os
 
+# edge-tts (FREE, no API key) — same Microsoft ko-KR neural voices as Azure.
+# (voice, rate%, pitchHz). Child = pitch way up; elderly = lower + slower.
+EDGE = {
+    "little_girl": ("ko-KR-SeoHyeonNeural", "-3%",  "+48Hz"),
+    "little_boy":  ("ko-KR-SeoHyeonNeural", "+0%",  "+36Hz"),
+    "teen_girl":   ("ko-KR-JiMinNeural",    "+3%",  "+14Hz"),
+    "teen_boy":    ("ko-KR-InJoonNeural",   "+4%",  "+22Hz"),
+    "young_woman": ("ko-KR-JiMinNeural",    "+0%",  "+0Hz"),
+    "young_man":   ("ko-KR-InJoonNeural",   "+0%",  "+0Hz"),
+    "mom":         ("ko-KR-SunHiNeural",    "-2%",  "-4Hz"),
+    "dad":         ("ko-KR-InJoonNeural",   "-4%",  "-22Hz"),
+    "grandma":     ("ko-KR-SunHiNeural",    "-12%", "-10Hz"),
+    "grandpa":     ("ko-KR-BongJinNeural",  "-12%", "-28Hz"),
+}
+
 # Azure ko-KR neural voices + per-role prosody (pitch, rate) for character.
 AZURE = {
     "little_girl": ("ko-KR-SeoHyeonNeural", "+28%", "-4%"),
@@ -58,6 +73,15 @@ ELEVEN = {
 
 def _env_override(provider: str, role: str) -> str | None:
     return os.environ.get(f"VOICE_{provider.upper()}_{role.upper()}")
+
+
+def edge(role: str, explicit: str = "") -> tuple[str, str, str]:
+    ov = _env_override("edge", role)
+    if ov:
+        return (ov, "+0%", "+0Hz")
+    if explicit:
+        return (explicit, "+0%", "+0Hz")
+    return EDGE.get(role, EDGE["young_man"])
 
 
 def azure(role: str, explicit: str = "") -> tuple[str, str, str]:
