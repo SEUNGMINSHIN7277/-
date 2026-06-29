@@ -171,6 +171,30 @@ Tip: keep uploads `private` until you've eyeballed a dozen, then flip
 
 ---
 
+## 🎤 You never record anything — the voice is 100% automatic
+
+The Korean voice is AI text-to-speech, generated for you. There is no manual
+recording, ever. On any machine with normal internet, `edge-tts` produces
+**natural neural Korean voices automatically** (free, no key). The only time
+you hear a robotic voice is in a locked-down environment with no network — then
+the code auto-falls back to offline `espeak` so it's still audible.
+
+### Cloud automation (natural voice, zero local setup)
+
+Don't want to install anything? Run it in the cloud, where the internet is open
+so the natural voice "just works":
+
+- **GitHub Actions** — included at `.github/workflows/shorts.yml`. Push this
+  repo to GitHub, open the **Actions** tab → *Make Korean Shorts* → **Run
+  workflow** (pick count / pair / format). It builds the videos with the
+  natural edge-tts voice and you download them as an artifact. Uncomment the
+  `schedule:` block to auto-produce daily — literally "while you sleep".
+  - Optional secret `GEMINI_API_KEY` → unlimited fresh scripts (else seed library).
+  - Optional secret `AZURE_SPEECH_KEY`/`GOOGLE_TTS_API_KEY` → guarantees the
+    natural voice even if Microsoft rate-limits the runner.
+- **Google Colab / any VPS / your laptop** — `pip install -r requirements.txt`,
+  `npm install`, then `python -m factory batch ...`. Natural voice, automatic.
+
 ## Customize
 
 - **Look:** colors / fonts / pacing / dim level in `config.yaml`.

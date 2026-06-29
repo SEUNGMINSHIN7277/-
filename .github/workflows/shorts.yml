@@ -1,0 +1,75 @@
+name: Make Korean Shorts (natural voice, automatic)
+
+# Runs the dialogue-shorts factory in the cloud, where the internet is open —
+# so edge-tts produces NATURAL Korean neural voices automatically. No manual
+# recording, no local setup. Click "Run workflow" or let the schedule fire.
+
+on:
+  workflow_dispatch:
+    inputs:
+      count:
+        description: How many shorts to make
+        default: "3"
+      pair:
+        description: "Optional character pair (dad_daughter, couple, grandma_grandchild, siblings, mom_son, grandpa_grandchild). Blank = random."
+        default: ""
+      format:
+        description: Visual format
+        type: choice
+        options: [call, scene]
+        default: call
+  # Uncomment to auto-produce every day (e.g. 09:00 UTC) — "while you sleep":
+  # schedule:
+  #   - cron: "0 9 * * *"
+
+jobs:
+  make:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: content-factory
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          npm install
+          npx playwright install --with-deps chromium
+
+      - name: Generate shorts (natural edge-tts voice)
+        env:
+          # Free Gemini key (optional) -> unlimited fresh scripts. Without it,
+          # the factory falls back to the built-in seed library automatically.
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LLM_PROVIDER: gemini
+          # edge = free natural neural voice. If Microsoft rate-limits the
+          # runner, the code auto-falls back to offline espeak (still audible).
+          TTS_PROVIDER: edge
+          # Optional: a free Azure/Google TTS key guarantees natural voice every time.
+          AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+          AZURE_SPEECH_REGION: ${{ secrets.AZURE_SPEECH_REGION }}
+          GOOGLE_TTS_API_KEY: ${{ secrets.GOOGLE_TTS_API_KEY }}
+        run: |
+          ARGS="--count ${{ github.event.inputs.count || '3' }} --format ${{ github.event.inputs.format || 'call' }}"
+          if [ -n "${{ github.event.inputs.pair }}" ]; then ARGS="$ARGS --pair ${{ github.event.inputs.pair }}"; fi
+          echo "factory batch $ARGS"
+          python -m factory batch $ARGS
+
+      - name: Upload finished videos
+        uses: actions/upload-artifact@v4
+        with:
+          name: korean-shorts
+          path: |
+            content-factory/output/**/*.mp4
+            content-factory/output/**/metadata.json
+            content-factory/output/**/thumbnail.png
+          retention-days: 30
